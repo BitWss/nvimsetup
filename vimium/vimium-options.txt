@@ -1,0 +1,57 @@
+# ==============================================================================
+# Vimium Options - Custom Key Mappings
+# Tailored for Colemak-DH (neio) & Neovim Muscle Memory Parity
+# ==============================================================================
+
+unmapAll
+
+# 1. Navigation: Colemak-DH (Left, Down, Up, Right)
+map n scrollLeft
+map e scrollDown
+map i scrollUp
+map o scrollRight
+
+# 2. Scrolling (Half-page & Full-page)
+map <c-d> scrollPageDown
+map <c-u> scrollPageUp
+map d scrollPageDown
+map u scrollPageUp
+map gg scrollToTop
+map G scrollToBottom
+
+# 3. Search: (j = next match, J = previous match)
+map / enterFindMode
+map j performFind
+map J performBackwardsFind
+
+# 4. Open URL / Vomnibar: 'l' replaces 'o'
+map l Vomnibar.activate
+map L Vomnibar.activateInNewTab
+map b Vomnibar.activateBookmarks
+map B Vomnibar.activateBookmarksInNewTab
+
+# 5. Browser Tabs: gt / gT and ]b / [b match Neovim
+map gt nextTab
+map gT previousTab
+map ]b nextTab
+map [b previousTab
+map t createTab
+map x removeTab
+map X restoreTab
+map T Vomnibar.activateTabSelection
+map yt duplicateTab
+
+# 6. Link hints & History
+map f LinkHints.activateMode
+map F LinkHints.activateModeToOpenInNewTab
+map yf LinkHints.activateModeToCopyLinkUrl
+map yy copyCurrentUrl
+map r reload
+map R reload hard
+map gi focusInput
+map H goBack
+
+# 7. Insert Mode: Shift-I (so single-letter 'i' or 'u' never triggers it)
+map I enterInsertMode
+map <a-i> enterInsertMode
+map <a-q> passNextKey

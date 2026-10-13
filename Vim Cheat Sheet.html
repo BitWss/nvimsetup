@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neovim &amp; Colemak-DH Ultimate Cheat Sheet</title>
+  <style>
+    :root {
+      --bg: #1a1b26;
+      --bg-card: #24283b;
+      --bg-card-alt: #1f2335;
+      --bg-kbd: #16161e;
+      --border-kbd: #414868;
+      --border-card: #2f354f;
+      --text: #c0caf5;
+      --text-muted: #7aa2f7;
+      --desc: #a9b1d6;
+      --heading: #7aa2f7;
+      --accent: #bb9af7;
+      --custom-badge: #7dcfff;
+      --colemak-color: #9ece6a;
+      --vimium-color: #ff9e64;
+      --power-color: #f7768e;
+      --tip-bg: #1f2335;
+      --tip-border: #e0af68;
+      --tip-text: #ff9e64;
+      --highlight: #2ac3de;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      padding: 24px 20px 60px;
+    }
+
+    header {
+      max-width: 1480px;
+      margin: 0 auto 24px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-card);
+    }
+
+    .title-group h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--heading);
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .subtitle {
+      font-size: 13.5px;
+      color: #9aa5ce;
+      margin-top: 5px;
+    }
+
+    .badge-pill {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 2px 9px;
+      border-radius: 999px;
+      background: rgba(125, 207, 255, 0.15);
+      color: var(--custom-badge);
+      border: 1px solid rgba(125, 207, 255, 0.3);
+      vertical-align: middle;
+    }
+
+    .badge-pill.vimium {
+      background: rgba(255, 158, 100, 0.15);
+      color: var(--vimium-color);
+      border-color: rgba(255, 158, 100, 0.35);
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      max-width: 440px;
+      min-width: 260px;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid #414868;
+      color: #c0caf5;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: #7aa2f7;
+      box-shadow: 0 0 0 3px rgba(122, 162, 247, 0.25);
+    }
+
+    .container {
+      max-width: 1480px;
+      margin: 0 auto;
+      column-count: 3;
+      column-gap: 20px;
+    }
+
+    @media (max-width: 1180px) {
+      .container {
+        column-count: 2;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        column-count: 1;
+      }
+    }
+
+    .section-card {
+      break-inside: avoid;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+      transition: border-color 0.2s;
+    }
+
+    .section-card:hover {
+      border-color: #414868;
+    }
+
+    .section-card.featured {
+      border-color: rgba(247, 118, 142, 0.4);
+      background: linear-gradient(180deg, rgba(247, 118, 142, 0.04) 0%, var(--bg-card) 100%);
+    }
+
+    .section-card.vimium-card {
+      border-color: rgba(255, 158, 100, 0.4);
+      background: linear-gradient(180deg, rgba(255, 158, 100, 0.04) 0%, var(--bg-card) 100%);
+    }
+
+    .section-card h2 {
+      font-size: 15.5px;
+      color: var(--heading);
+      border-bottom: 2px solid #363b54;
+      padding-bottom: 8px;
+      margin-bottom: 13px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    li {
+      margin-bottom: 8.5px;
+      color: var(--desc);
+      font-size: 13.5px;
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 3px;
+    }
+
+    li .desc {
+      color: #9aa5ce;
+    }
+
+    kbd {
+      display: inline-block;
+      padding: 2px 6px;
+      font-family: "JetBrains Mono", Consolas, "Fira Code", monospace;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.35;
+      color: #7dcfff;
+      background-color: var(--bg-kbd);
+      border: 1px solid var(--border-kbd);
+      border-radius: 4px;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.4);
+      margin-right: 3px;
+      white-space: nowrap;
+    }
+
+    kbd.colemak {
+      color: #9ece6a;
+      border-color: #41a6b5;
+      background-color: #1a242f;
+    }
+
+    kbd.leader {
+      color: #bb9af7;
+      border-color: #565f89;
+    }
+
+    kbd.power {
+      color: #f7768e;
+      border-color: #893f4e;
+      background-color: #271e27;
+    }
+
+    kbd.vimium {
+      color: #ff9e64;
+      border-color: #694432;
+      background-color: #261f1c;
+    }
+
+    .custom-tag {
+      font-size: 10px;
+      background: rgba(158, 206, 106, 0.15);
+      color: #9ece6a;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .custom-tag.power {
+      background: rgba(247, 118, 142, 0.15);
+      color: #f7768e;
+    }
+
+    .custom-tag.vimium {
+      background: rgba(255, 158, 100, 0.15);
+      color: #ff9e64;
+    }
+
+    .well {
+      background: var(--tip-bg);
+      border-left: 3px solid var(--tip-border);
+      color: #cfc9c2;
+      padding: 10px 12px;
+      border-radius: 4px;
+      font-size: 12.5px;
+      margin: 12px 0 6px;
+    }
+
+    .well strong {
+      color: var(--tip-text);
+      display: inline-block;
+      margin-right: 4px;
+    }
+
+    .well code {
+      color: #7dcfff;
+      background: #16161e;
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+
+    .code-box {
+      background: #16161e;
+      border: 1px solid #2f354f;
+      border-radius: 6px;
+      padding: 10px;
+      margin: 10px 0;
+      position: relative;
+    }
+
+    .code-box pre {
+      font-family: "JetBrains Mono", Consolas, monospace;
+      font-size: 11.5px;
+      color: #9ece6a;
+      overflow-x: auto;
+      max-height: 240px;
+      white-space: pre;
+      line-height: 1.45;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: #24283b;
+      color: #7aa2f7;
+      border: 1px solid #414868;
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: #7aa2f7;
+      color: #1a1b26;
+    }
+
+    .footer {
+      max-width: 1480px;
+      margin: 36px auto 0;
+      text-align: center;
+      font-size: 13px;
+      color: #565f89;
+      border-top: 1px solid var(--border-card);
+      padding-top: 20px;
+    }
+
+    .footer a {
+      color: #7aa2f7;
+      text-decoration: none;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="title-group">
+      <h1>
+        Neovim &amp; Colemak-DH Cheat Sheet
+        <span class="badge-pill">Personalized</span>
+        <span class="badge-pill vimium">Vimium Ready</span>
+      </h1>
+      <div class="subtitle">
+        Tailored for <strong>Colemak-DH (neio)</strong>, <strong>LazyVim</strong>, <strong>C++23 Toolchain</strong>, and <strong>Vimium Browser Parity</strong>.
+      </div>
+    </div>
+    <div class="search-box">
+      <input type="text" id="search" class="search-input" placeholder="Search commands (e.g. 'copy all', 'tab', 'split', 'vimium', 'neio')...">
+    </div>
+  </header>
+
+  <div class="container" id="cards-container">
+
+    <!-- CARD 1: Whole-File Power Combos (FEATURED) -->
+    <div class="section-card featured">
+      <h2>Global &amp; Whole-File Power Combos <span class="custom-tag power">Essential</span></h2>
+      <ul>
+        <li><kbd class="power">:%y+</kbd> <span class="desc">- Copy (yank) entire file to Windows system clipboard</span></li>
+        <li><kbd class="power">ggVG</kbd> <span class="desc">- Select entire file visually from first to last line</span></li>
+        <li><kbd class="power">ggyG</kbd> <span class="desc">- Yank (copy) entire file into default register</span></li>
+        <li><kbd class="power">:%d</kbd> <span class="desc">- Delete (clear) all contents in current buffer</span></li>
+        <li><kbd class="power">ggdG</kbd> <span class="desc">- Alternative: delete everything from line 1 to end</span></li>
+        <li><kbd class="power">gg=G</kbd> <span class="desc">- Auto-indent &amp; reformat entire file indentation</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>cf</kbd> / <kbd class="leader">&lt;leader&gt;</kbd> + <kbd>f</kbd> <span class="desc">- Format file with clang-format (4 spaces)</span></li>
+        <li><kbd>:%s/old/new/g</kbd> <span class="desc">- Find and replace all occurrences in whole file</span></li>
+        <li><kbd>:%s/old/new/gc</kbd> <span class="desc">- Replace all with interactive confirmation prompt</span></li>
+        <li><kbd>:g/^$/d</kbd> <span class="desc">- Delete all empty / blank lines across the file</span></li>
+        <li><kbd>:g/pattern/d</kbd> <span class="desc">- Delete all lines containing 'pattern'</span></li>
+        <li><kbd>:v/pattern/d</kbd> <span class="desc">- Invert: delete all lines that DO NOT contain 'pattern'</span></li>
+        <li><kbd>:sort</kbd> <span class="desc">- Sort all lines alphabetically</span></li>
+        <li><kbd>:sort u</kbd> <span class="desc">- Sort lines and remove duplicates</span></li>
+        <li><kbd>:sort n</kbd> <span class="desc">- Sort lines numerically</span></li>
+        <li><kbd>:%to$</kbd> <span class="desc">- Duplicate entire buffer contents to bottom of file</span></li>
+      </ul>
+      <div class="well">
+        <strong>Pro-Tip:</strong> <code>:%y+</code> is the cleanest way to copy all code to send on Discord or submit on Codeforces. Neovim also syncs <code>y</code> directly to Windows clipboard.
+      </div>
+    </div>
+
+    <!-- CARD 2: Creating Files & Buffer Management -->
+    <div class="section-card">
+      <h2>Creating Files &amp; Buffers <span class="custom-tag">Tabs &amp; Files</span></h2>
+      <ul>
+        <li><kbd>:e filename.cpp</kbd> <span class="desc">- Create or open file in current window</span></li>
+        <li><kbd>:vsp filename.cpp</kbd> <span class="desc">- Create / open file in a vertical split</span></li>
+        <li><kbd>:sp filename.cpp</kbd> <span class="desc">- Create / open file in a horizontal split</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>fn</kbd> <span class="desc">- LazyVim shortcut to create a new blank buffer</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>bn</kbd> or <kbd>]b</kbd> <span class="desc">- Switch to NEXT open tab / buffer</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>bp</kbd> or <kbd>[b</kbd> <span class="desc">- Switch to PREVIOUS open tab / buffer</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>bd</kbd> <span class="desc">- Close / delete tab without closing window split!</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>bb</kbd> <span class="desc">- Toggle back to the other / last used buffer</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>,</kbd> or <kbd class="leader">&lt;leader&gt;</kbd> + <kbd>fb</kbd> <span class="desc">- Fuzzy search list of all open buffers</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>&lt;space&gt;</kbd> or <kbd class="leader">&lt;leader&gt;</kbd> + <kbd>ff</kbd> <span class="desc">- Find and open project files</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>w</kbd> <span class="desc">- Save buffer to disk (:w)</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>q</kbd> <span class="desc">- Quit Neovim (:q)</span></li>
+      </ul>
+      <div class="well">
+        <strong>Creating from Explorer:</strong> Open sidebar (<kbd class="leader">&lt;leader&gt;</kbd> + <kbd>e</kbd>), navigate to directory, and press <kbd>a</kbd> to add file.
+      </div>
+    </div>
+
+    <!-- CARD 3: Tab Pages -->
+    <div class="section-card">
+      <h2>Vim Tab Pages <span class="custom-tag">Layout Tabs</span></h2>
+      <ul>
+        <li><kbd>gt</kbd> or <kbd>:tabnext</kbd> <span class="desc">- Go to NEXT tab page</span></li>
+        <li><kbd>gT</kbd> or <kbd>:tabprev</kbd> <span class="desc">- Go to PREVIOUS tab page</span></li>
+        <li><kbd>2gt</kbd> <span class="desc">- Jump directly to tab page 2 (replace 2 with any #)</span></li>
+        <li><kbd class="leader">&lt;leader&gt;&lt;tab&gt;&lt;tab&gt;</kbd> or <kbd>:tabnew</kbd> <span class="desc">- Open a brand new tab page</span></li>
+        <li><kbd class="leader">&lt;leader&gt;&lt;tab&gt;d</kbd> or <kbd>:tabclose</kbd> <span class="desc">- Close current tab page</span></li>
+        <li><kbd class="leader">&lt;leader&gt;&lt;tab&gt;l</kbd> <span class="desc">- Jump to last tab page</span></li>
+        <li><kbd class="leader">&lt;leader&gt;&lt;tab&gt;f</kbd> <span class="desc">- Jump to first tab page</span></li>
+        <li><kbd>:tabmove +1</kbd> / <kbd>:tabmove -1</kbd> <span class="desc">- Move tab right / left</span></li>
+      </ul>
+      <div class="well">
+        <strong>Note:</strong> Top bar files in LazyVim are buffers. Use <kbd class="leader">&lt;leader&gt;</kbd>+<kbd>bn</kbd>/<kbd>bp</kbd> for buffers and <kbd>gt</kbd>/<kbd>gT</kbd> for multi-window tabpages.
+      </div>
+    </div>
+
+    <!-- CARD 4: Window Splits & Switching -->
+    <div class="section-card">
+      <h2>Window Splits &amp; Switching <span class="custom-tag">Colemak-DH</span></h2>
+      <ul>
+        <li><kbd class="colemak">Ctrl</kbd> + <kbd class="colemak">w</kbd> + <kbd class="colemak">n</kbd> <span class="desc">- Move focus to split on LEFT</span></li>
+        <li><kbd class="colemak">Ctrl</kbd> + <kbd class="colemak">w</kbd> + <kbd class="colemak">e</kbd> <span class="desc">- Move focus to split BELOW</span></li>
+        <li><kbd class="colemak">Ctrl</kbd> + <kbd class="colemak">w</kbd> + <kbd class="colemak">i</kbd> <span class="desc">- Move focus to split ABOVE</span></li>
+        <li><kbd class="colemak">Ctrl</kbd> + <kbd class="colemak">w</kbd> + <kbd class="colemak">o</kbd> <span class="desc">- Move focus to split on RIGHT</span></li>
+        <li><kbd>Ctrl</kbd> + <kbd>w</kbd> + <kbd>w</kbd> <span class="desc">- Cycle to next split window</span></li>
+        <li><kbd>Ctrl</kbd> + <kbd>w</kbd> + <kbd>p</kbd> <span class="desc">- Jump to PREVIOUS accessed split (toggle back &amp; forth)</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>wv</kbd> <span class="desc">- Split window vertically</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>ws</kbd> <span class="desc">- Split window horizontally</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>wd</kbd> or <kbd>:close</kbd> <span class="desc">- Close current split</span></li>
+        <li><kbd>Ctrl</kbd> + <kbd>w</kbd> + <kbd>o</kbd> or <kbd>:only</kbd> <span class="desc">- Maximize split: close all other splits</span></li>
+        <li><kbd>Ctrl</kbd> + <kbd>w</kbd> + <kbd>=</kbd> <span class="desc">- Equalize width and height of all splits</span></li>
+        <li><kbd>Ctrl</kbd> + <kbd>w</kbd> + <kbd>_</kbd> / <kbd>Ctrl</kbd> + <kbd>w</kbd> + <kbd>|</kbd> <span class="desc">- Maximize split height / width</span></li>
+        <li><kbd>Ctrl</kbd> + <kbd>\</kbd> <kbd>Ctrl</kbd> + <kbd>n</kbd> <span class="desc">- Exit terminal mode into normal mode</span></li>
+      </ul>
+      <div class="well">
+        <strong>Terminal Tip:</strong> When inside cf-runner's split terminal, press <kbd>Ctrl+\ Ctrl+n</kbd> then <kbd>Ctrl+w i</kbd> to jump straight back to your code.
+      </div>
+    </div>
+
+    <!-- CARD 5: Colemak Cursor Movement -->
+    <div class="section-card">
+      <h2>Cursor Movement <span class="custom-tag">Colemak-DH</span></h2>
+      <ul>
+        <li><kbd class="colemak">n</kbd> <span class="desc">- Move left (replaces <kbd>h</kbd>)</span></li>
+        <li><kbd class="colemak">e</kbd> <span class="desc">- Move down / wrapped line (replaces <kbd>j</kbd>)</span></li>
+        <li><kbd class="colemak">i</kbd> <span class="desc">- Move up / wrapped line (replaces <kbd>k</kbd>)</span></li>
+        <li><kbd class="colemak">o</kbd> <span class="desc">- Move right (replaces <kbd>l</kbd>)</span></li>
+        <li><kbd class="colemak">k</kbd> <span class="desc">- Jump forward to end of word (replaces <kbd>e</kbd>)</span></li>
+        <li><kbd class="colemak">K</kbd> <span class="desc">- Jump forward to end of WORD (replaces <kbd>E</kbd>)</span></li>
+        <li><kbd>w</kbd> / <kbd>W</kbd> <span class="desc">- Jump forward to start of word / WORD</span></li>
+        <li><kbd>b</kbd> / <kbd>B</kbd> <span class="desc">- Jump backward to start of word / WORD</span></li>
+        <li><kbd>0</kbd> / <kbd>^</kbd> / <kbd>$</kbd> <span class="desc">- Jump to start / first non-blank / end of line</span></li>
+        <li><kbd>gg</kbd> / <kbd>G</kbd> <span class="desc">- Jump to first / last line of document</span></li>
+        <li><kbd>5G</kbd> or <kbd>5gg</kbd> <span class="desc">- Jump to line number 5</span></li>
+        <li><kbd>%</kbd> <span class="desc">- Jump to matching bracket: (), {}, []</span></li>
+        <li><kbd>fx</kbd> / <kbd>tx</kbd> <span class="desc">- Jump to next 'x' / before next 'x'</span></li>
+        <li><kbd>Fx</kbd> / <kbd>Tx</kbd> <span class="desc">- Jump backward to 'x' / after previous 'x'</span></li>
+        <li><kbd>;</kbd> / <kbd>,</kbd> <span class="desc">- Repeat previous f/t motion forward / backward</span></li>
+        <li><kbd>}</kbd> / <kbd>{</kbd> <span class="desc">- Jump to next / previous code paragraph</span></li>
+        <li><kbd>Ctrl</kbd> + <kbd>d</kbd> / <kbd>Ctrl</kbd> + <kbd>u</kbd> <span class="desc">- Scroll down / up 1/2 page</span></li>
+        <li><kbd>zz</kbd> / <kbd>zt</kbd> / <kbd>zb</kbd> <span class="desc">- Center / top / bottom screen on cursor</span></li>
+      </ul>
+      <div class="well">
+        <strong>Home-Row:</strong> Right hand rests on <kbd>n</kbd> (left), <kbd>e</kbd> (down), <kbd>i</kbd> (up), <kbd>o</kbd> (right). Prefix with numbers (e.g. <kbd>10e</kbd> jumps down 10 lines).
+      </div>
+    </div>
+
+    <!-- CARD 6: Insert Mode & Line Creation -->
+    <div class="section-card">
+      <h2>Insert Mode &amp; Line Creation <span class="custom-tag">Colemak-DH</span></h2>
+      <ul>
+        <li><kbd class="colemak">u</kbd> <span class="desc">- Insert before cursor (matches QWERTY 'i' key position)</span></li>
+        <li><kbd class="colemak">U</kbd> <span class="desc">- Insert at start of line (replaces <kbd>I</kbd>)</span></li>
+        <li><kbd>a</kbd> / <kbd>A</kbd> <span class="desc">- Append after cursor / at end of line</span></li>
+        <li><kbd class="colemak">l</kbd> <span class="desc">- Open new line BELOW and insert (replaces <kbd>o</kbd>)</span></li>
+        <li><kbd class="colemak">L</kbd> <span class="desc">- Open new line ABOVE and insert (replaces <kbd>O</kbd>)</span></li>
+        <li><kbd>h</kbd> / <kbd>H</kbd> <span class="desc">- Insert mode / insert at beginning (aliases)</span></li>
+        <li><kbd>Esc</kbd> or <kbd>Ctrl</kbd> + <kbd>c</kbd> <span class="desc">- Exit insert mode to normal mode</span></li>
+        <li><kbd>Ctrl</kbd> + <kbd>w</kbd> <span class="desc">- Delete word backward in insert mode</span></li>
+        <li><kbd>Ctrl</kbd> + <kbd>u</kbd> <span class="desc">- Delete to start of line in insert mode</span></li>
+        <li><kbd>Ctrl</kbd> + <kbd>h</kbd> <span class="desc">- Backspace character in insert mode</span></li>
+        <li><kbd>Ctrl</kbd> + <kbd>t</kbd> / <kbd>Ctrl</kbd> + <kbd>d</kbd> <span class="desc">- Indent / de-indent current line</span></li>
+        <li><kbd>Tab</kbd> <span class="desc">- Accept / cycle autocomplete suggestion (super-tab)</span></li>
+        <li><kbd>Enter</kbd> <span class="desc">- Normal newline without accepting popup</span></li>
+      </ul>
+    </div>
+
+    <!-- CARD 7: Editing, Undo & Redo -->
+    <div class="section-card">
+      <h2>Editing, Undo &amp; Redo <span class="custom-tag">Colemak-DH</span></h2>
+      <ul>
+        <li><kbd class="colemak">z</kbd> <span class="desc">- Undo last change (same physical key on Colemak &amp; QWERTY)</span></li>
+        <li><kbd class="colemak">Z</kbd> or <kbd>Ctrl</kbd> + <kbd>r</kbd> <span class="desc">- Redo change</span></li>
+        <li><kbd>.</kbd> <span class="desc">- Repeat last editing command</span></li>
+        <li><kbd>r</kbd> / <kbd>R</kbd> <span class="desc">- Replace single character / enter replace mode</span></li>
+        <li><kbd>cc</kbd> or <kbd>S</kbd> <span class="desc">- Change (delete &amp; insert) entire line</span></li>
+        <li><kbd>c$</kbd> or <kbd>C</kbd> <span class="desc">- Change from cursor to end of line</span></li>
+        <li><kbd class="colemak">cuw</kbd> / <kbd>ciw</kbd> <span class="desc">- Change inner word</span></li>
+        <li><kbd>cw</kbd> <span class="desc">- Change to end of word</span></li>
+        <li><kbd>s</kbd> <span class="desc">- Flash jump search / substitute character</span></li>
+        <li><kbd>J</kbd> / <kbd>gJ</kbd> <span class="desc">- Join line below with / without space</span></li>
+        <li><kbd>~</kbd> <span class="desc">- Toggle uppercase &harr; lowercase of single character</span></li>
+        <li><kbd>Ctrl</kbd> + <kbd>a</kbd> / <kbd>Ctrl</kbd> + <kbd>x</kbd> <span class="desc">- Increment / decrement number under cursor</span></li>
+      </ul>
+    </div>
+
+    <!-- CARD 8: Text Objects & Delimiters -->
+    <div class="section-card">
+      <h2>Text Objects &amp; Delimiters <span class="custom-tag">Colemak-DH</span></h2>
+      <ul>
+        <li><kbd class="colemak">u</kbd> <span class="desc">- Inner text object modifier (<kbd>u</kbd> = inner, <kbd>a</kbd> = around)</span></li>
+        <li><kbd class="colemak">cuw</kbd> / <kbd class="colemak">duw</kbd> / <kbd class="colemak">yuw</kbd> <span class="desc">- Change / delete / yank inner word</span></li>
+        <li><kbd>caw</kbd> / <kbd>daw</kbd> / <kbd>yaw</kbd> <span class="desc">- Change / delete / yank word + surrounding space</span></li>
+        <li><kbd class="colemak">cu"</kbd> / <kbd class="colemak">du"</kbd> / <kbd class="colemak">yu"</kbd> <span class="desc">- Inside double quotes: "..."</span></li>
+        <li><kbd class="colemak">cu'</kbd> / <kbd class="colemak">du'</kbd> / <kbd class="colemak">yu'</kbd> <span class="desc">- Inside single quotes: '...'</span></li>
+        <li><kbd class="colemak">cu(</kbd> or <kbd class="colemak">cub</kbd> <span class="desc">- Inside parentheses: (...)</span></li>
+        <li><kbd class="colemak">cu{</kbd> or <kbd class="colemak">cuB</kbd> <span class="desc">- Inside curly braces: {...}</span></li>
+        <li><kbd class="colemak">cu[</kbd> / <kbd class="colemak">cu&lt;</kbd> <span class="desc">- Inside square brackets [...] or tags &lt;...&gt;</span></li>
+        <li><kbd>ca(</kbd> / <kbd>ca{</kbd> / <kbd>ca"</kbd> <span class="desc">- Change whole block INCLUDING quotes / brackets</span></li>
+        <li><kbd>v</kbd> / <kbd>V</kbd> / <kbd>Ctrl</kbd> + <kbd>v</kbd> <span class="desc">- Characterwise / linewise / block visual mode</span></li>
+        <li><kbd class="colemak">U</kbd> or <kbd>h</kbd> <span class="desc">- Insert in visual block mode</span></li>
+        <li><kbd>&gt;</kbd> / <kbd>&lt;</kbd> <span class="desc">- Indent / unindent selected block</span></li>
+        <li><kbd>gv</kbd> <span class="desc">- Re-select last visual selection</span></li>
+      </ul>
+    </div>
+
+    <!-- CARD 9: Cut, Copy (Yank) & Registers -->
+    <div class="section-card">
+      <h2>Cut, Copy &amp; Registers</h2>
+      <ul>
+        <li><kbd>yy</kbd> / <kbd>2yy</kbd> <span class="desc">- Yank (copy) current line / 2 lines</span></li>
+        <li><kbd class="colemak">yuw</kbd> / <kbd>yiw</kbd> <span class="desc">- Yank inner word</span></li>
+        <li><kbd>y$</kbd> or <kbd>Y</kbd> <span class="desc">- Yank to end of line</span></li>
+        <li><kbd>p</kbd> / <kbd>P</kbd> <span class="desc">- Paste after / before cursor</span></li>
+        <li><kbd>dd</kbd> / <kbd>2dd</kbd> <span class="desc">- Delete (cut) current line / 2 lines</span></li>
+        <li><kbd class="colemak">duw</kbd> / <kbd>diw</kbd> <span class="desc">- Delete inner word</span></li>
+        <li><kbd>d$</kbd> or <kbd>D</kbd> <span class="desc">- Delete to end of line</span></li>
+        <li><kbd>x</kbd> <span class="desc">- Delete character under cursor</span></li>
+        <li><kbd>"0p</kbd> <span class="desc">- Paste LAST YANKED text (ignores subsequent deletes!)</span></li>
+        <li><kbd>"_d</kbd> / <kbd>"_c</kbd> <span class="desc">- Black-hole register: delete without overwriting clipboard</span></li>
+        <li><kbd>"+y</kbd> / <kbd>"+p</kbd> <span class="desc">- Explicit Windows system clipboard yank / paste</span></li>
+        <li><kbd>:reg</kbd> <span class="desc">- Show all register contents</span></li>
+        <li><kbd>qa</kbd> ... <kbd>q</kbd> <span class="desc">- Record macro into register 'a'</span></li>
+        <li><kbd>@a</kbd> / <kbd>@@</kbd> <span class="desc">- Play macro 'a' / replay last macro</span></li>
+      </ul>
+      <div class="well">
+        <strong>Clipboard Savior:</strong> If you copy something, then delete a word with <kbd>d</kbd>, use <kbd>"0p</kbd> to paste what you copied instead of what you deleted!
+      </div>
+    </div>
+
+    <!-- CARD 10: Search, Jumps & Navigation -->
+    <div class="section-card">
+      <h2>Search, Jumps &amp; Navigation <span class="custom-tag">Colemak-DH</span></h2>
+      <ul>
+        <li><kbd>/pattern</kbd> / <kbd>?pattern</kbd> <span class="desc">- Search forward / backward</span></li>
+        <li><kbd class="colemak">j</kbd> <span class="desc">- Next search match (replaces <kbd>n</kbd>)</span></li>
+        <li><kbd class="colemak">J</kbd> <span class="desc">- Previous search match (replaces <kbd>N</kbd>)</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>ch</kbd> or <kbd>:noh</kbd> <span class="desc">- Clear search highlights</span></li>
+        <li><kbd>*</kbd> / <kbd>#</kbd> <span class="desc">- Search forward / backward for exact word under cursor</span></li>
+        <li><kbd>Ctrl</kbd> + <kbd>o</kbd> <span class="desc">- Jump backward in jump list (go back to previous location)</span></li>
+        <li><kbd>Ctrl</kbd> + <kbd>i</kbd> <span class="desc">- Jump forward in jump list</span></li>
+        <li><kbd>g;</kbd> / <kbd>g,</kbd> <span class="desc">- Jump to previous / next change location in file</span></li>
+        <li><kbd>ma</kbd> <span class="desc">- Set mark 'a' at current position</span></li>
+        <li><kbd>`a</kbd> / <kbd>'a</kbd> <span class="desc">- Jump to exact mark position / line</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>/</kbd> <span class="desc">- Search in current file</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>fg</kbd> <span class="desc">- Live grep search across entire project</span></li>
+      </ul>
+    </div>
+
+    <!-- CARD 11: Neo-tree File Explorer -->
+    <div class="section-card">
+      <h2>Neo-tree File Explorer <span class="custom-tag">Colemak-DH</span></h2>
+      <ul>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>e</kbd> <span class="desc">- Toggle file explorer sidebar</span></li>
+        <li><kbd class="colemak">e</kbd> / <kbd class="colemak">i</kbd> <span class="desc">- Move cursor down / up</span></li>
+        <li><kbd class="colemak">n</kbd> <span class="desc">- Collapse folder / jump to parent directory</span></li>
+        <li><kbd class="colemak">o</kbd> or <kbd>Enter</kbd> <span class="desc">- Open file / expand folder</span></li>
+        <li><kbd>a</kbd> <span class="desc">- Add new file (end with <kbd>/</kbd> to create directory)</span></li>
+        <li><kbd>d</kbd> <span class="desc">- Delete file or directory</span></li>
+        <li><kbd>r</kbd> <span class="desc">- Rename file or directory</span></li>
+        <li><kbd>c</kbd> / <kbd>x</kbd> / <kbd>p</kbd> <span class="desc">- Copy / cut / paste file</span></li>
+        <li><kbd>H</kbd> <span class="desc">- Toggle hidden dotfiles</span></li>
+        <li><kbd>I</kbd> <span class="desc">- Show file info and permissions</span></li>
+        <li><kbd>q</kbd> <span class="desc">- Close file explorer sidebar</span></li>
+      </ul>
+    </div>
+
+    <!-- CARD 12: C/C++ LSP & Code Intelligence -->
+    <div class="section-card">
+      <h2>C &amp; C++ Development (LSP) <span class="custom-tag">Clangd</span></h2>
+      <ul>
+        <li><kbd>gh</kbd> or <kbd class="leader">&lt;leader&gt;</kbd> + <kbd>k</kbd> <span class="desc">- Hover documentation for symbol</span></li>
+        <li><kbd>gd</kbd> <span class="desc">- Go to definition</span></li>
+        <li><kbd>gD</kbd> <span class="desc">- Go to declaration</span></li>
+        <li><kbd>gi</kbd> <span class="desc">- Go to implementation</span></li>
+        <li><kbd>gr</kbd> <span class="desc">- Find all symbol references</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>cr</kbd> or <kbd class="leader">&lt;leader&gt;</kbd> + <kbd>rn</kbd> <span class="desc">- Rename symbol project-wide</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>ca</kbd> <span class="desc">- Code Action (quick fix, auto-import header)</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>cf</kbd> <span class="desc">- Format file with clang-format (4 spaces)</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>c&lt;Tab&gt;</kbd> <span class="desc">- Switch between source &amp; header (.cpp &harr; .h)</span></li>
+        <li><kbd>[d</kbd> / <kbd>]d</kbd> <span class="desc">- Jump to previous / next diagnostic error</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>cd</kbd> <span class="desc">- Show floating diagnostic error message</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>xx</kbd> <span class="desc">- Open Trouble diagnostic list</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>cs</kbd> <span class="desc">- Document symbol outline</span></li>
+      </ul>
+    </div>
+
+    <!-- CARD 13: Build, Run & Competitive Programming -->
+    <div class="section-card">
+      <h2>Build, Run &amp; Competitive Programming <span class="custom-tag">C++23</span></h2>
+      <ul>
+        <li><kbd>F6</kbd> or <kbd class="leader">&lt;leader&gt;</kbd> + <kbd>cc</kbd> <span class="desc">- Compile (C++23) &amp; run with cf-runner in split terminal</span></li>
+        <li><kbd>F6</kbd> in Insert mode <span class="desc">- Auto-exits insert mode and runs compiler</span></li>
+        <li><kbd>cp</kbd> or <kbd>cp1</kbd> <span class="desc">- Competitive programming template (lines 1-3)</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>m</kbd> <span class="desc">- Run :make using project Makefile</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>db</kbd> <span class="desc">- Toggle breakpoint (CodeLLDB)</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>dc</kbd> <span class="desc">- Start / continue debugger</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>di</kbd> / <kbd class="leader">&lt;leader&gt;</kbd> + <kbd>dO</kbd> / <kbd class="leader">&lt;leader&gt;</kbd> + <kbd>do</kbd> <span class="desc">- Step into / over / out</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>du</kbd> <span class="desc">- Toggle DAP debugger UI</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>dt</kbd> <span class="desc">- Terminate debug session</span></li>
+      </ul>
+      <div class="well">
+        <strong>Autocomplete:</strong> Standard library functions automatically insert <code>std::</code> (e.g. <code>std::abs</code>, <code>std::sqrt</code>). Inlay hints are permanently disabled.
+      </div>
+    </div>
+
+    <!-- CARD 14: Code Folding & Folds -->
+    <div class="section-card">
+      <h2>Code Folding &amp; Quick Views</h2>
+      <ul>
+        <li><kbd>za</kbd> <span class="desc">- Toggle code fold under cursor</span></li>
+        <li><kbd>zc</kbd> <span class="desc">- Close fold under cursor</span></li>
+        <li><kbd>zo</kbd> <span class="desc">- Open fold under cursor</span></li>
+        <li><kbd>zR</kbd> <span class="desc">- Open ALL folds across whole file</span></li>
+        <li><kbd>zM</kbd> <span class="desc">- Close ALL folds across whole file</span></li>
+        <li><kbd>zj</kbd> / <kbd>zk</kbd> <span class="desc">- Move to start of next / previous fold</span></li>
+        <li><kbd>[c</kbd> / <kbd>]c</kbd> <span class="desc">- Jump to previous / next Git diff change</span></li>
+        <li><kbd class="leader">&lt;leader&gt;</kbd> + <kbd>ghp</kbd> <span class="desc">- Preview Git diff hunk popup</span></li>
+      </ul>
+    </div>
+
+    <!-- CARD 15: Vimium Browser Extension Parity (NEW & COMPREHENSIVE) -->
+    <div class="section-card vimium-card">
+      <h2>Vimium Browser Extension <span class="custom-tag vimium">Browser Parity</span></h2>
+      <ul>
+        <li><kbd class="vimium">n</kbd> / <kbd class="vimium">e</kbd> / <kbd class="vimium">i</kbd> / <kbd class="vimium">o</kbd> <span class="desc">- Scroll LEFT / DOWN / UP / RIGHT (neio cluster)</span></li>
+        <li><kbd class="vimium">j</kbd> / <kbd class="vimium">J</kbd> <span class="desc">- Find NEXT / PREVIOUS match (matches Neovim!)</span></li>
+        <li><kbd class="vimium">I</kbd> <span class="desc">- Enter insert mode (pass keys through to web page)</span></li>
+        <li><kbd>Ctrl</kbd> + <kbd>d</kbd> / <kbd>Ctrl</kbd> + <kbd>u</kbd> <span class="desc">- Scroll half-page down / up</span></li>
+        <li><kbd class="vimium">d</kbd> / <kbd class="vimium">u</kbd> <span class="desc">- Single-key half-page down / up</span></li>
+        <li><kbd>gg</kbd> / <kbd>G</kbd> <span class="desc">- Scroll to very top / very bottom of page</span></li>
+        <li><kbd class="vimium">l</kbd> / <kbd class="vimium">L</kbd> <span class="desc">- Vomnibar: Open URL/Search in current / new tab</span></li>
+        <li><kbd>b</kbd> / <kbd>B</kbd> <span class="desc">- Open Bookmarks in current / new tab</span></li>
+        <li><kbd class="vimium">gt</kbd> or <kbd class="vimium">]b</kbd> <span class="desc">- Switch to NEXT browser tab</span></li>
+        <li><kbd class="vimium">gT</kbd> or <kbd class="vimium">[b</kbd> <span class="desc">- Switch to PREVIOUS browser tab</span></li>
+        <li><kbd>x</kbd> / <kbd>X</kbd> <span class="desc">- Close current tab / Reopen (undo) closed tab</span></li>
+        <li><kbd>t</kbd> <span class="desc">- Create brand new tab</span></li>
+        <li><kbd>T</kbd> <span class="desc">- Fuzzy search through all open tabs</span></li>
+        <li><kbd>f</kbd> / <kbd>F</kbd> <span class="desc">- Link hints: click link in current / new tab</span></li>
+        <li><kbd>H</kbd> <span class="desc">- Go back in browser history</span></li>
+        <li><kbd>r</kbd> / <kbd>R</kbd> <span class="desc">- Reload page / Hard reload (skip cache)</span></li>
+        <li><kbd>yy</kbd> <span class="desc">- Copy current page URL to clipboard</span></li>
+      </ul>
+
+      <div class="well">
+        <strong>Vimium Setup Instructions:</strong> Open Vimium Options &rarr; paste the configuration below into <strong>Custom key mappings</strong> &rarr; click <strong>Save Changes</strong> (Ctrl+Enter).
+      </div>
+
+      <div class="code-box">
+        <button class="copy-btn" id="copy-vimium-btn">Copy Config</button>
+        <pre id="vimium-config-text"># ==============================================================================
+# Vimium Options - Custom Key Mappings (Colemak-DH Parity)
+# ==============================================================================
+
+unmapAll
+
+# 1. Navigation: neio home-row cluster (Left, Down, Up, Right)
+map n scrollLeft
+map e scrollDown
+map i scrollUp
+map o scrollRight
+
+# 2. Half-page and full scrolling
+map &lt;c-d&gt; scrollPageDown
+map &lt;c-u&gt; scrollPageUp
+map d scrollPageDown
+map u scrollPageUp
+map gg scrollToTop
+map G scrollToBottom
+
+# 3. Search: j = next match, J = previous match (matches Neovim Colemak)
+map / enterFindMode
+map j performFind
+map J performBackwardsFind
+
+# 4. Open URL / Vomnibar: 'l' replaces 'o' (matches Neovim 'l' line open)
+map l Vomnibar.activate
+map L Vomnibar.activateInNewTab
+map b Vomnibar.activateBookmarks
+map B Vomnibar.activateBookmarksInNewTab
+
+# 5. Browser Tabs: gt / gT and ]b / [b match Neovim buffer &amp; tab navigation
+map gt nextTab
+map gT previousTab
+map ]b nextTab
+map [b previousTab
+map t createTab
+map x removeTab
+map X restoreTab
+map T Vomnibar.activateTabSelection
+map yt duplicateTab
+
+# 6. Link hints, history &amp; utilities
+map f LinkHints.activateMode
+map F LinkHints.activateModeToOpenInNewTab
+map yf LinkHints.activateModeToCopyLinkUrl
+map yy copyCurrentUrl
+map r reload
+map R reload hard
+map gi focusInput
+map H goBack
+
+# 7. Insert mode: Shift-I (so pressing single-key 'i' only moves up)
+map I enterInsertMode
+map &lt;a-i&gt; enterInsertMode
+map &lt;a-q&gt; passNextKey</pre>
+      </div>
+      <div class="well">
+        <strong>Colemak Link Hints Tip:</strong> Under <em>Advanced Options &rarr; Characters used for link hints</em> in Vimium, set: <code>arstdhneio</code> so link shortcuts stay on your Colemak home keys!
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    Personalized Neovim &amp; Colemak-DH Ultimate Reference &bull; Tokyo Night Theme &bull; Updated for Neovim &amp; Vimium Parity
+  </div>
+
+  <script>
+    const searchInput = document.getElementById('search');
+    const cards = document.querySelectorAll('.section-card');
+
+    searchInput.addEventListener('input', function(e) {
+      const q = e.target.value.toLowerCase().trim();
+      cards.forEach(card => {
+        const items = card.querySelectorAll('li, .well');
+        let cardHasMatch = false;
+
+        items.forEach(item => {
+          const text = item.textContent.toLowerCase();
+          if (!q || text.includes(q)) {
+            item.classList.remove('hidden');
+            cardHasMatch = true;
+          } else {
+            item.classList.add('hidden');
+          }
+        });
+
+        if (!q || cardHasMatch) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    });
+
+    // Copy Vimium config button
+    const copyBtn = document.getElementById('copy-vimium-btn');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function() {
+        const codeText = document.getElementById('vimium-config-text').innerText;
+        navigator.clipboard.writeText(codeText).then(() => {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => { copyBtn.textContent = 'Copy Config'; }, 2000);
+        });
+      });
+    }
+  </script>
+</body>
+</html>

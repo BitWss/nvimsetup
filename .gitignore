@@ -1,0 +1,26 @@
+# Neovim & Vim swap files
+*.swp
+*.swo
+*.swn
+*~
+
+# Backup files
+*.backup
+*.bak
+
+# Build outputs
+output/
+bin/
+*.exe
+*.obj
+*.o
+*.pdb
+
+# Clangd and language server cache
+.cache/
+compile_commands.json
+
+# OS specific files
+Thumbs.db
+desktop.ini
+.DS_Store

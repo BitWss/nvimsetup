@@ -1,0 +1,46 @@
+{
+  "CP Minimal Template": {
+    "prefix": "cp",
+    "body": [
+      "#include <iostream>",
+      "",
+      "int main() {",
+      "    std::ios_base::sync_with_stdio(false);",
+      "    std::cin.tie(nullptr);",
+      "",
+      "    $0",
+      "",
+      "    return 0;",
+      "}"
+    ],
+    "description": "Minimal CP template with fast I/O"
+  },
+  "CP Multi-Testcase Template": {
+    "prefix": "cp1",
+    "body": [
+      "#include <iostream>",
+      "#include <vector>",
+      "#include <string>",
+      "#include <algorithm>",
+      "",
+      "void solve() {",
+      "    $0",
+      "}",
+      "",
+      "int main() {",
+      "    std::ios_base::sync_with_stdio(false);",
+      "    std::cin.tie(nullptr);",
+      "",
+      "    int t {1};",
+      "    // std::cin >> t;",
+      "",
+      "    while (t--) {",
+      "        solve();",
+      "    }",
+      "",
+      "    return 0;",
+      "}"
+    ],
+    "description": "Competitive programming template with solve() function"
+  }
+}
