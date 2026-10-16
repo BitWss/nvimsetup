@@ -50,7 +50,8 @@ TABLE OF CONTENTS:
   Module 11: Macros: Record Once, Replay Across 50 Lines ( q , @ , @@ )
   Module 12: Marks, Jumps & Context Memory ( '', ``, Ctrl-O, Ctrl-I, m{a-z} )
   Module 13: Case, Indent, Number Toggling (~, gU, gu, >>, <<, Ctrl-A, Ctrl-X)
-  Module 14: Graduation Boss Challenge: Refactor a Messy C++ Snippet
+  Module 14: Surrounding Text in (), [], {}, "", '' (The 1-Key Visual Wrap & mini.surround)
+  Module 15: Graduation Boss Challenge: Refactor a Messy C++ Snippet
 --------------------------------------------------------------------------------
 
 
@@ -553,7 +554,83 @@ Line: int counter = 10;
 
 
 ================================================================================
-MODULE 14: GRADUATION BOSS CHALLENGE
+MODULE 14: SURROUNDING TEXT IN PARENTHESES, BRACKETS & QUOTES
+================================================================================
+Putting selected text inside ( ), [ ], { }, or " " is one of the most frequent
+needs in programming (math expressions, function arguments, string literals).
+
+In your setup, you now have THREE ways to do this, ranging from an effortless
+1-keystroke shortcut to powerful normal-mode motions:
+
+METHOD 1: THE 1-KEYSTROKE VISUAL WRAP (Easiest & Fastest!)
+  1. Highlight any text in Visual mode: `v` (characterwise) or `V` (linewise).
+  2. Press the symbol you want to wrap with:
+     ( or )  -> wraps in ( ... )
+     [ or ]  -> wraps in [ ... ]
+     { or }  -> wraps in { ... }
+     "       -> wraps in " ... "
+     '       -> wraps in ' ... '
+     `       -> wraps in ` ... `
+     < or >  -> wraps in < ... >
+
+METHOD 2: NORMAL MODE SURROUND with mini.surround (No Selection Needed!)
+  gsa{motion}{char} : Add surrounding around {motion}
+    Example: `gsaw)` surrounds the current word in ( )!
+    Example: `gsa$"` surrounds from cursor to end of line in " "!
+  gsd{char}         : Delete surrounding {char}
+    Example: `gsd)` on `(a + b)` deletes the parentheses -> `a + b`!
+    Example: `gsd"` on `"hello"` deletes the quotes -> `hello`!
+  gsr{old}{new}     : Replace surrounding {old} with {new}
+    Example: `gsr)["` replaces `[item]` with `"item"`!
+    Example: `gsr)}` replaces `(x)` with `{x}`!
+
+METHOD 3: THE PURE STOCK VIM WAY (Works on any bare server without plugins)
+  1. Highlight text with `v`.
+  2. Press `c` (cuts selection into register ").
+  3. Press `(` (mini.pairs auto-closes it to `()`).
+  4. Press `<C-r>"` (inserts register " inside the parens).
+  5. Press `<Esc>`.
+
+--- Drill 14.1: Wrap Expressions in Parentheses ---
+---> PLAYGROUND 14.1 <---
+Exercise A: Wrap `a + b` in parentheses using Method 1.
+Place cursor on 'a'. Press `v`, press `o` [l] 4 times (or `f+` then `w`) to select `a + b`.
+Now press `(`! Instantly wrapped into `(a + b)`!
+Before: int total = a + b * multiplier;
+Target: int total = (a + b) * multiplier;
+
+Exercise B: Wrap `count > 0` in parentheses using Method 1.
+Select `count > 0` with `v` and press `)`:
+Before: if count > 0 && is_ready {
+Target: if (count > 0) && is_ready {
+
+--- Drill 14.2: Wrap Strings & Brackets ---
+---> PLAYGROUND 14.2 <---
+Exercise A: Turn unquoted raw text into a string literal using `"`.
+Place cursor on 'u' in `user_token_abc`. Press `ve` (or `vw`), then press `"`!
+Before: auto key = user_token_abc;
+Target: auto key = "user_token_abc";
+
+Exercise B: Wrap `items` in square brackets using `[`.
+Place cursor on 'i' in `items`. Press `viw` (or `vuw`), then press `[`!
+Before: auto ref = items;
+Target: auto ref = [items];
+
+--- Drill 14.3: Delete & Replace Surrounding with mini.surround ---
+---> PLAYGROUND 14.3 <---
+Exercise A: Delete surrounding parentheses using `gsd)`.
+Place cursor anywhere on `(redundant_parens)` below. Press `gsd)`.
+Before: int value = (redundant_parens);
+Target: int value = redundant_parens;
+
+Exercise B: Replace surrounding parentheses with curly braces using `gsr){`.
+Place cursor inside `(1, 2, 3)` below. Press `gsr){`.
+Before: std::vector<int> numbers = (1, 2, 3);
+Target: std::vector<int> numbers = {1, 2, 3};
+
+
+================================================================================
+MODULE 15: GRADUATION BOSS CHALLENGE
 ================================================================================
 Clean up this broken, messy C++ function using ONLY the motions learned above.
 Try not to touch the arrow keys or use repeated backspaces!

@@ -238,3 +238,39 @@ map("i", "<F6>", function()
   cf_run_file()
 end, { desc = "Compile & Run with cf-runner (F6)" })
 
+-- ---------------------------------------------------------------------------
+-- 4. Instant Visual Surround (Wrap selected text in (), [], {}, "", '')
+-- ---------------------------------------------------------------------------
+local function wrap_selection(open_delim, close_delim)
+  return function()
+    local reg_save = vim.fn.getreg('"')
+    local reg_type = vim.fn.getregtype('"')
+    vim.cmd('normal! "zd')
+    local text = vim.fn.getreg('z')
+    local z_type = vim.fn.getregtype('z')
+
+    if z_type == 'V' then
+      local had_newline = text:sub(-1) == "\n"
+      if had_newline then text = text:sub(1, -2) end
+      vim.fn.setreg('z', open_delim .. "\n" .. text .. "\n" .. close_delim .. (had_newline and "\n" or ""), 'V')
+    else
+      vim.fn.setreg('z', open_delim .. text .. close_delim, 'c')
+    end
+    vim.cmd('normal! "zP')
+    vim.fn.setreg('"', reg_save, reg_type)
+  end
+end
+
+-- 1-Keystroke Visual Wrappers: select text, press symbol to wrap!
+map("x", "(", wrap_selection("(", ")"), { desc = "Surround with ()" })
+map("x", ")", wrap_selection("(", ")"), { desc = "Surround with ()" })
+map("x", "[", wrap_selection("[", "]"), { desc = "Surround with []" })
+map("x", "]", wrap_selection("[", "]"), { desc = "Surround with []" })
+map("x", "{", wrap_selection("{ ", " }"), { desc = "Surround with {  }" })
+map("x", "}", wrap_selection("{", "}"), { desc = "Surround with {}" })
+map("x", '"', wrap_selection('"', '"'), { desc = 'Surround with ""' })
+map("x", "'", wrap_selection("'", "'"), { desc = "Surround with ''" })
+map("x", "`", wrap_selection("`", "`"), { desc = "Surround with ``" })
+map("x", "<", wrap_selection("<", ">"), { desc = "Surround with <>" })
+map("x", ">", wrap_selection("<", ">"), { desc = "Surround with <>" })
+
