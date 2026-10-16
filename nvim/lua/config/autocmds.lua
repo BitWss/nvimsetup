@@ -22,3 +22,17 @@ vim.api.nvim_create_autocmd({ "FileType", "BufEnter", "BufWinEnter" }, {
     end
   end,
 })
+
+-- User command to instantly reset training.txt from training_master.txt
+vim.api.nvim_create_user_command("TrainingReset", function()
+  local dir = vim.fn.expand("%:p:h")
+  local master = dir .. "/training_master.txt"
+  if vim.fn.filereadable(master) == 1 then
+    local content = vim.fn.readfile(master)
+    vim.api.nvim_buf_set_lines(0, 0, -1, false, content)
+    vim.cmd("write")
+    vim.notify("Training playground successfully reset from master copy!", vim.log.levels.INFO, { title = "Vim Training Dojo" })
+  else
+    vim.notify("training_master.txt not found in directory: " .. dir, vim.log.levels.WARN, { title = "Vim Training Dojo" })
+  end
+end, { desc = "Reset training.txt from training_master.txt" })

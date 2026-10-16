@@ -1,0 +1,596 @@
+================================================================================
+          NEOVIM & COLEMAK-DH INTERACTIVE MOTION & EDITING DOJO
+================================================================================
+Welcome to your interactive training grounds. This document is designed to be
+DESTRUCTIBLE. You are meant to delete, mangle, reorder, change, yank, and replace
+text directly inside this file as you complete the hands-on drills.
+
+================================================================================
+HOW TO RESET THIS FILE IF YOU MANGLE IT TOO MUCH:
+================================================================================
+A master pristine copy is saved right beside this file as `training_master.txt`.
+Whenever you want a clean slate to re-run the drills:
+  Inside Neovim, simply run:
+    :!copy /Y "%:p:h\training_master.txt" "%:p"
+  Then reload the buffer:
+    :e!
+  Or use the custom command if configured:
+    :TrainingReset
+
+================================================================================
+QUICK REFERENCE: YOUR COLEMAK-DH NAVIGATION ROSETTA STONE
+================================================================================
+Your Neovim setup uses Colemak-DH navigation ("neio") with dedicated keys:
+  Directional Move : n (left)   e (down)   i (up)   o (right)
+  Insert Mode      : u (insert) U (insert at line start) | aliases: h, H
+  Append Mode      : a (after)  A (at line end)
+  Open New Line    : l (below)  L (above)
+  Undo / Redo      : z (undo)   Z (redo / Ctrl-R)
+  End of Word      : k (word end)   K (WORD end)
+  Search Repeat    : j (next match) J (prev match)
+  Text Object Inner: u (e.g. cuw, du", vu()   [Replaces QWERTY 'i']
+  Text Object Outer: a (e.g. caw, da", va()   [Standard 'around']
+
+Throughout this file, commands are shown as: YOUR_KEY [QWERTY_EQUIVALENT].
+Whenever you see a PLAYGROUND block, place your cursor on the prompt line and
+perform the exercise until the target outcome is achieved!
+
+--------------------------------------------------------------------------------
+TABLE OF CONTENTS:
+  Module 01: Horizontal Word & Character Precision (w, W, b, B, k, K, f, F, t, T, ;, ,)
+  Module 02: Line & Block Boundaries (0, ^, $, %)
+  Module 03: Vertical Navigation Speed (gg, G, {count}G, Ctrl-D, Ctrl-U, zz, zt, zb, {, })
+  Module 04: The Grammar of Deletion (d + motion, dw, dW, dd, D, d$, d0, df, dt)
+  Module 05: The Superiority of Change (c + motion, cw, cW, cc, C, cf, ct, s, r, R)
+  Module 06: Text Objects Superpowers (cuw, caw, cu", ca", cu(, ca(, cu{, ca{, cut)
+  Module 07: Copying (Yank), Pasting (Put) & The Register Black Hole (y, p, P, "0, "_d, "+)
+  Module 08: The Legendary Dot Command ( . ) & Repeat Magic
+  Module 09: Search Mastery ( / , ? , j , J , * , # , :%s///g , cgn )
+  Module 10: Visual Block Multicursor Powers ( v , V , Ctrl-V , I/U , A )
+  Module 11: Macros: Record Once, Replay Across 50 Lines ( q , @ , @@ )
+  Module 12: Marks, Jumps & Context Memory ( '', ``, Ctrl-O, Ctrl-I, m{a-z} )
+  Module 13: Case, Indent, Number Toggling (~, gU, gu, >>, <<, Ctrl-A, Ctrl-X)
+  Module 14: Graduation Boss Challenge: Refactor a Messy C++ Snippet
+--------------------------------------------------------------------------------
+
+
+================================================================================
+MODULE 01: HORIZONTAL WORD & CHARACTER PRECISION
+================================================================================
+Goal: Stop pressing 'o' (right) or 'n' (left) ten times in a row. Teleport directly
+to where your eyes are looking.
+
+Motions:
+  w       : Jump forward to start of next word (punctuation breaks words)
+  b       : Jump backward to start of previous word
+  k  [e]  : Jump forward to END of current/next word
+  W       : Jump forward to start of next WORD (space-delimited only! Ignores symbols!)
+  B       : Jump backward to start of previous WORD
+  K  [E]  : Jump forward to END of current/next WORD
+  f{char} : Find {char} forward on the current line (cursor lands ON {char})
+  F{char} : Find {char} backward on the current line
+  t{char} : "Till" {char} forward (cursor lands ONE character BEFORE {char})
+  T{char} : "Till" {char} backward
+  ;       : Repeat last f/F/t/T search in same direction (SUPER USEFUL!)
+  ,       : Repeat last f/F/t/T search in opposite direction
+
+--- Drill 1.1: Word vs. WORD Navigation ---
+Notice the difference: `w` treats `std::vector<int>::iterator` as 8 separate tokens.
+`W` treats `std::vector<int>::iterator` as ONE single giant token because there are no spaces.
+
+---> PLAYGROUND 1.1 <---
+Put cursor at the start of line below. Press `w` repeatedly to count the stops.
+Then press `0` to return to start, and press `W` to see how it skips the entire type!
+Line: std::vector<std::pair<int, long long>> lookup_table = {}; int total_count = 0;
+
+Now practice `k` [e]:
+Put cursor at the start of line below. Press `k` to jump to the END of each word.
+Line: return calculate_distance_between_nodes(start_node, target_node);
+
+--- Drill 1.2: Inline Character Teleportation with f, t, ;, , ---
+Don't use `w` 6 times if you want to jump to the comma or quotation mark. Use `f`!
+
+---> PLAYGROUND 1.2 <---
+1. Place cursor on the first character of the line below.
+2. Press `f(` to jump straight to the opening parenthesis.
+3. Press `f"` to jump to the first quote.
+4. Press `t"` to jump right before the closing quote.
+5. Press `f,` to jump to the comma, then press `;` repeatedly to jump to subsequent commas!
+6. Press `,` to jump backward to the previous comma.
+Line: auto res = solve_query("user_id_109283", 42, 999, 1048576, true, nullptr);
+
+
+================================================================================
+MODULE 02: LINE & BLOCK BOUNDARIES
+================================================================================
+Motions:
+  0       : Hard start of line (column 0, includes indentation whitespace)
+  ^       : First non-blank character of line (start of actual code!)
+  $       : End of line
+  %       : Jump to matching bracket pair: ( ), [ ], { }, < >
+
+Tip: In 95% of cases where you want to go to the start of a code line, use `^`,
+not `0`, so you don't land on useless leading spaces or tabs!
+
+---> PLAYGROUND 2.1: Line Boundaries ---
+1. Place cursor somewhere in the middle of the line below.
+2. Press `0` -> Notice you land on column 0 (before indentation).
+3. Press `^` -> Notice you land directly on the 'c' in `const`.
+4. Press `$` -> Notice you land on the semicolon at the end.
+Line:             const double PI_APPROXIMATION = 3.141592653589793;
+
+---> PLAYGROUND 2.2: Bracket Bouncing with % ---
+1. Place cursor on the opening `{` on line 1 below.
+2. Press `%` to jump to the matching closing `}`.
+3. Place cursor on the `(` in `if (condition)` and press `%`.
+Line 1: if ((x > 0 && y < 10) || (z == 42 && (w & 1))) {
+Line 2:     for (int i = 0; i < n; ++i) {
+Line 3:         process_item(matrix[i][offset + 1]);
+Line 4:     }
+Line 5: }
+
+
+================================================================================
+MODULE 03: VERTICAL NAVIGATION SPEED
+================================================================================
+Goal: Never hold down `e` (down) or `i` (up) to scroll across 50 lines.
+
+Motions:
+  gg        : Jump to the very first line of the file
+  G         : Jump to the very last line of the file
+  {number}G : Jump to exact line number (e.g. 45G) | Or type :45<CR>
+  Ctrl-d    : Scroll down half a screen (keeps cursor centered; fast scanning)
+  Ctrl-u    : Scroll up half a screen
+  {         : Jump backward to previous empty line / paragraph
+  }         : Jump forward to next empty line / paragraph (BLAZING fast in code!)
+  zz        : Redraw screen so the current line is in the exact CENTER of your screen
+  zt        : Redraw screen so the current line is at the TOP of your screen
+  zb        : Redraw screen so the current line is at the BOTTOM of your screen
+
+---> PLAYGROUND 3.1: Paragraph Bouncing with { and } ---
+Place your cursor right here.
+Press `}` 3 times. See how you instantly leap from code block to code block!
+Press `{` 3 times to leap backward up.
+
+Block A:
+int calculate_sum(int a, int b) {
+    return a + b;
+}
+
+Block B:
+int calculate_product(int a, int b) {
+    return a * b;
+}
+
+Block C:
+int calculate_difference(int a, int b) {
+    return a - b;
+}
+
+---> PLAYGROUND 3.2: Viewport Centering with zz ---
+Scroll your view until this line is near the bottom of your window.
+Now press `zz`.
+Notice how the editor immediately brings this line into the dead center of your screen!
+
+
+================================================================================
+MODULE 04: THE GRAMMAR OF DELETION
+================================================================================
+Vim is a language. The core formula is:
+  [OPERATOR] + [COUNT] + [MOTION]
+Where operator `d` means Delete (and copy into register).
+
+Commands:
+  x       : Delete single character under cursor
+  dw      : Delete from cursor to start of next word
+  dW      : Delete to start of next space-delimited WORD
+  dk [de] : Delete from cursor to END of current word
+  dd      : Delete entire line
+  3dd     : Delete 3 lines
+  d$ / D  : Delete from cursor to end of line
+  d0      : Delete from cursor backward to start of line (col 0)
+  d^      : Delete from cursor backward to first non-blank character
+  df{c}   : Delete everything from cursor through {c} inclusive
+  dt{c}   : Delete everything from cursor up until {c} exclusive
+  d%      : Delete everything between matching brackets
+
+--- Drill 4.1: Delete Words and Remnants ---
+---> PLAYGROUND 4.1 <---
+Exercise A: Place cursor on the 't' in `terrible_` and press `dw` to remove it.
+Before: int good_value = terrible_ actual_value;
+Target: int good_value = actual_value;
+
+Exercise B: Place cursor on the first quote `"` below and press `d$` or `D`.
+Before: std::string message = "This error message is outdated and needs to go";
+Target: std::string message = 
+
+Exercise C: Place cursor on the 'b' in `bad_argument` below. Press `dt,` (delete till comma).
+Before: execute_transaction(bad_argument_must_die, valid_account_id);
+Target: execute_transaction(, valid_account_id);
+
+Exercise D: Delete the 3 junk lines below using `3dd`:
+Line 1: // JUNK DEBUG LOG 1
+Line 2: // JUNK DEBUG LOG 2
+Line 3: // JUNK DEBUG LOG 3
+Line 4: int real_code = 100;
+
+
+================================================================================
+MODULE 05: THE SUPERIORITY OF CHANGE (c) OVER DELETE (d)
+================================================================================
+KEY INSIGHT: When fixing code, almost NEVER use `dw` followed by entering insert mode.
+Always use `c` (Change)!
+Why?
+1. `c` deletes the target AND immediately puts you into Insert Mode.
+2. It groups the deletion AND the replacement into ONE atomic undo unit.
+3. Crucially: It empowers the DOT command `.` to repeat the exact same change elsewhere!
+
+Commands:
+  cw      : Change to end of word (deletes word & enters insert)
+  cW      : Change to end of WORD
+  cc / S  : Change entire line (clears line, preserves indentation, enters insert)
+  c$ / C  : Change from cursor to end of line
+  ct{c}   : Change up till character {c}
+  cf{c}   : Change through character {c}
+  s       : Substitute single character (delete 1 char & enter insert)
+  r{c}    : Replace single character with {c} (STAYS in Normal Mode! Fastest typo fix!)
+  R       : Enter Replace mode (overwrites characters one-by-one until you press Esc)
+
+--- Drill 5.1: Fast Word Changes & Typo Fixes ---
+---> PLAYGROUND 5.1 <---
+Exercise A: Place cursor on 'f' in `false_value`. Press `cw`, type `true_value`, press `<Esc>`.
+Before: bool is_active = false_value;
+Target: bool is_active = true_value;
+
+Exercise B: Fix typo using single-character replace `r`.
+Place cursor on the wrong 'x' in `flxat`. Press `ro` to replace 'x' with 'o'. Done in 2 keystrokes!
+Before: flxat current_temperature = 98.6f;
+Target: float current_temperature = 98.6f;
+
+Exercise C: Change entire line preserving indentation with `cc` or `S`.
+Place cursor anywhere on the line below. Press `cc`, type `int result = calculate();`, press `<Esc>`.
+Before:             // TODO: delete this comment and write the code
+Target:             int result = calculate();
+
+Exercise D: Change inside parameters with `ct)`.
+Place cursor on 'o' in `old_arg1`. Press `ct)`, type `new_arg1, new_arg2`, press `<Esc>`.
+Before: run_pipeline(old_arg1, old_arg2, old_arg3);
+Target: run_pipeline(new_arg1, new_arg2);
+
+
+================================================================================
+MODULE 06: TEXT OBJECTS SUPERPOWERS
+================================================================================
+This is the single biggest feature that separates Vim masters from beginners.
+Text objects allow you to operate on structured code blocks regardless of where
+your cursor is inside that block!
+
+Formula:
+  [OPERATOR: d, c, y, v] + [TARGET: u (inner) or a (around)] + [OBJECT]
+
+Remember: In your Colemak-DH setup, `u` is mapped to `i` (inner)!
+  u = INNER  (affects only the content inside the delimiters)
+  a = AROUND (affects the content PLUS the surrounding quotes, parens, or spaces)
+
+Objects:
+  w    : word
+  W    : WORD
+  "    : double quotes
+  '    : single quotes
+  `    : backticks
+  ( / b: parentheses ( )
+  { / B: curly braces { }
+  [    : square brackets [ ]
+  <    : angle brackets < >
+  t    : HTML/XML tags <tag>...</tag>
+  p    : paragraph
+
+--- Drill 6.1: Quotes Text Objects (cu" vs ca") ---
+---> PLAYGROUND 6.1 <---
+Exercise A: Place cursor anywhere inside "Hello, world!". Press `cu"` [QWERTY: ci"].
+Type `Goodbye, world!`, press `<Esc>`. Notice the quotes remained intact!
+Before: std::string greeting = "Hello, world!";
+Target: std::string greeting = "Goodbye, world!";
+
+Exercise B: Place cursor anywhere inside "delete_everything". Press `da"`.
+Notice both the text AND the quotes were deleted!
+Before: const char* name = "delete_everything";
+Target: const char* name = ;
+
+--- Drill 6.2: Brackets & Parentheses Text Objects ---
+---> PLAYGROUND 6.2 <---
+Exercise A: Change parameters with `cu(`.
+Place cursor on `z` inside `vec.size()`. Press `cu(`.
+Type `vec.begin(), vec.end()`, press `<Esc>`.
+Before: std::sort(vec.size());
+Target: std::sort(vec.begin(), vec.end());
+
+Exercise B: Delete inside braces with `du{` or `duB`.
+Place cursor inside the if-body below and press `du{`.
+Before:
+if (is_valid) {
+    do_step_one();
+    do_step_two();
+    do_step_three();
+}
+Target:
+if (is_valid) {
+}
+
+--- Drill 6.3: Word Objects (cuw vs caw) ---
+Difference:
+`cuw` changes the word letters.
+`caw` changes the word letters PLUS the trailing whitespace!
+---> PLAYGROUND 6.3 <---
+Place cursor on `apple`. Press `daw` to delete it and its trailing space cleanly!
+Before: fruits = { apple, banana, cherry };
+Target: fruits = { banana, cherry };
+
+
+================================================================================
+MODULE 07: COPY (YANK), PASTE (PUT) & THE REGISTER BLACK HOLE
+================================================================================
+Commands:
+  yy / Y  : Yank (copy) current line
+  yw      : Yank word
+  yu"     : Yank text inside quotes
+  ya(     : Yank text around parentheses
+  p       : Put (paste) after cursor / line below
+  P       : Put (paste) before cursor / line above
+
+--- The Dreaded Trap: "I yanked something, deleted an old line, and my yank is gone!" ---
+Why this happens: In Vim, `dd`, `dw`, `cw`, `x` are NOT just deletes—they are CUTS!
+They overwrite the default unnamed register `"`.
+So when you do `yy` (yanked text A), then `dd` (deleted text B), and press `p`,
+it pastes text B!
+
+The 3 Solutions Every Pro Uses:
+1. Register "0 (The Yank Register):
+   Register `0` ALWAYS holds the last explicitly YANKED text! Deletes never touch it!
+   Press: `"0p` to paste your yanked text even after deleting 20 lines!
+2. The Black Hole Register `"_`:
+   Delete without saving to clipboard: `"_dd` or `"_dw` or `"_cuw`.
+   The `_` register is a black hole—it discards the text forever.
+3. System Clipboard:
+   "+y : Yank to Windows clipboard (Ctrl-C to other apps)
+   "+p : Paste from Windows clipboard (Ctrl-V from other apps)
+4. Named Registers:
+   "ay : Yank into register a
+   "ap : Paste from register a (you have registers a through z!)
+
+---> PLAYGROUND 7.1: The "0p Secret ---
+1. Place cursor on Line 1 below. Press `yy` to yank it.
+2. Move cursor to Line 2. Press `dd` to delete it.
+3. If you press `p` now, you would paste the junk line you just deleted!
+4. Instead, press `"0p`!
+Notice it pastes Line 1 cleanly!
+Line 1: const int SPECIAL_BUFFER_SIZE = 4096;
+Line 2: // THIS IS TRASH DELETE ME
+
+
+================================================================================
+MODULE 08: THE LEGENDARY DOT COMMAND ( . )
+================================================================================
+The dot `.` key repeats the last change.
+The master formula:
+  "One keystroke to move, one keystroke to repeat."
+
+Scenario: You need to append a semicolon `;` to the end of 5 lines.
+Manual newbie way: Go to end, insert, semicolon, esc, down, go to end... (40 keystrokes)
+Vim way:
+  On line 1: `A;` `<Esc>`
+  On line 2: `e .`  (Colemak: down line + dot!)
+  On line 3: `e .`
+  On line 4: `e .`
+
+---> PLAYGROUND 8.1: Append with Dot ---
+Place cursor on line 1 below. Press `A;` `<Esc>`.
+Then press `e` (move down) and `.` (repeat). Repeat for all 4 lines!
+Line 1: int a = 1
+Line 2: int b = 2
+Line 3: int c = 3
+Line 4: int d = 4
+
+---> PLAYGROUND 8.2: Word Replacement with Dot ---
+Change `old_name` to `new_name` across this block using `cuw` and `.`:
+1. On the first `old_name`, press `cuw` [QWERTY: ciw], type `new_name`, press `<Esc>`.
+2. Press `w` until cursor is on the next `old_name`. Press `.`!
+3. Press `w` again to the third `old_name`. Press `.`!
+Line: process(old_name, config.old_name, cache[old_name]);
+
+
+================================================================================
+MODULE 09: SEARCH MASTERY & THE cgn TRICK
+================================================================================
+Commands:
+  /pattern<CR> : Search forward
+  ?pattern<CR> : Search backward
+  j  [n]       : Jump to NEXT search match in your Colemak-DH setup
+  J  [N]       : Jump to PREVIOUS search match
+  *            : Search for the word currently under your cursor (NO TYPING!)
+  #            : Search backward for word under cursor
+  <leader>ch   : Clear search highlights (:nohlsearch)
+
+--- The Magical `cgn` Combo ---
+What is `cgn`?
+`c` = Change, `gn` = Next search match.
+It replaces the search match you are currently on, so pressing `.` automatically
+jumps to the NEXT match AND replaces it!
+This gives you an interactive, selective Find & Replace:
+  1. Search for word: `/target<CR>` or press `*` on it.
+  2. Press `cgn`, type replacement, press `<Esc>`.
+  3. Press `.` to replace the next one, OR press `j` [n] to skip it and find next!
+
+---> PLAYGROUND 9.1: The cgn Dance ---
+We want to change `bad_var` to `good_var`, but leave `keep_bad_var` alone:
+1. Place cursor on `bad_var` in line 1.
+2. Press `*` to highlight it.
+3. Press `cgn`, type `good_var`, press `<Esc>`.
+4. Press `.` on line 2 to replace it.
+5. On line 3, press `j` [n] to SKIP `keep_bad_var`!
+6. On line 4, press `.` to replace the last one!
+Line 1: int bad_var = 10;
+Line 2: int double_bad = bad_var * 2;
+Line 3: int preserve_this = keep_bad_var;
+Line 4: std::cout << bad_var << '\n';
+
+
+================================================================================
+MODULE 10: VISUAL BLOCK MULTICURSOR POWERS (<Ctrl-v>)
+================================================================================
+Who needs multiple cursors when you have Visual Block mode?
+Commands:
+  v       : Character visual mode
+  V       : Line visual mode
+  Ctrl-v  : Column / Block visual mode
+  o       : Move cursor to the other diagonal corner of visual selection!
+  gv      : Reselect the last visual area!
+
+--- Drill 10.1: Comment Out 5 Lines Simultaneously ---
+---> PLAYGROUND 10.1 <---
+1. Place cursor on the first character ('v') of line 1 below.
+2. Press `Ctrl-v` to enter Visual Block mode.
+3. Press `4e` (or press `e` 4 times) to extend the block down 4 lines.
+4. Press `U` [QWERTY: I] (capital U enters Block-Insert at line start).
+5. Type `// ` (slash slash space).
+6. Press `<Esc>`. Wait half a second—BAM! All 5 lines are commented out!
+Line 1: vector<int> data;
+Line 2: data.push_back(10);
+Line 3: data.push_back(20);
+Line 4: data.push_back(30);
+Line 5: sort(data.begin(), data.end());
+
+--- Drill 10.2: Append Semicolons to a Block ---
+---> PLAYGROUND 10.2 <---
+1. Place cursor on column 1 of line 1 below.
+2. Press `Ctrl-v`, then `2e` to select down 3 lines.
+3. Press `$` (dollar sign selects to the end of each line, even if different lengths!).
+4. Press `A` (Block-Append at line ends).
+5. Type `;` and press `<Esc>`.
+Line 1: int x = 100
+Line 2: double long_variable_name = 3.14159
+Line 3: char c = 'Z'
+
+
+================================================================================
+MODULE 11: MACROS: RECORD ONCE, REPLAY ACROSS 50 LINES
+================================================================================
+A macro records your exact sequence of keystrokes and replays them automatically.
+
+Formula:
+  qa      : Start recording macro into register 'a' (statusline shows recording @a)
+  ...     : Do your editing actions (ALWAYS end in a repeatable position, like next line!)
+  q       : Stop recording
+  @a      : Play back macro 'a' once
+  @@      : Repeat the last executed macro
+  10@a    : Execute macro 'a' 10 times in a row!
+
+Golden Rule of Macros:
+Always make each macro self-contained: start at column 0 (`^` or `0`) and end
+at column 0 on the NEXT line (`e0` or `j0`). That way, running `50@a` works smoothly!
+
+---> PLAYGROUND 11.1: Transform Raw Data into C++ Array ---
+Goal: Convert raw numbers into `{ 10, "item" },` format.
+1. Put cursor on '1' on line 1 below.
+2. Press `qa` to start recording into register a.
+3. Press `^` (go to start), press `u` [i], type `{ `, press `<Esc>`.
+4. Press `$` (go to end), press `a`, type `, "item" },`, press `<Esc>`.
+5. Press `e0` (move to start of next line!).
+6. Press `q` to stop recording.
+7. Now press `3@a` (or `@a` then `@@` then `@@`)!
+Line 1: 10
+Line 2: 20
+Line 3: 30
+Line 4: 40
+
+
+================================================================================
+MODULE 12: MARKS, JUMPS & CONTEXT MEMORY
+================================================================================
+Never lose your place when jumping around large files!
+
+Commands:
+  Ctrl-o  : Jump BACKWARD to previous cursor location (Jump List)
+  Ctrl-i  : Jump FORWARD in Jump List
+  ''      : Jump back to the exact line where you were before your last jump!
+  ``      : Jump back to the exact line AND column before your last jump!
+  ma      : Set local mark 'a' at current position
+  'a      : Jump to line of mark 'a'
+  `a      : Jump to line and column of mark 'a'
+  mA      : Capital letters set GLOBAL marks across different files!
+
+---> PLAYGROUND 12.1: The Yo-Yo Jump ---
+1. Place cursor here. Press `ma` (sets mark a).
+2. Press `gg` to jump to the very top of the file!
+3. Look around, then press `Ctrl-o` or `'a` -> You teleport right back here!
+4. Press `G` to jump to the bottom of the file!
+5. Press `''` -> Back here again!
+
+
+================================================================================
+MODULE 13: CASE, INDENT, NUMBER TOGGLING
+================================================================================
+Commands:
+  ~       : Toggle case of character under cursor (lower <-> UPPER)
+  gUw     : Convert word to UPPERCASE
+  guw     : Convert word to lowercase
+  gU$     : Uppercase from cursor to end of line
+  >>      : Indent current line right by 4 spaces
+  <<      : Dedent current line left by 4 spaces
+  Ctrl-a  : INCREMENT number under or near cursor by 1 (works on negatives & hex!)
+  Ctrl-x  : DECREMENT number under cursor by 1
+  5Ctrl-a : Add 5 to number!
+
+---> PLAYGROUND 13.1: Case Switching ---
+Place cursor on `constant_name` below. Press `gUw` to turn it to `CONSTANT_NAME`!
+Line: const int constant_name = 100;
+
+---> PLAYGROUND 13.2: Incrementing with Ctrl-a ---
+Place cursor on `10` below. Press `Ctrl-a` three times (watch it become 13).
+Press `10Ctrl-a` (watch it become 23).
+Press `Ctrl-x` (watch it become 22).
+Line: int counter = 10;
+
+
+================================================================================
+MODULE 14: GRADUATION BOSS CHALLENGE
+================================================================================
+Clean up this broken, messy C++ function using ONLY the motions learned above.
+Try not to touch the arrow keys or use repeated backspaces!
+
+Tasks:
+1. Fix the function signature: change `old_broken_func` to `calculate_stats` using `cuw`.
+2. Fix parameter 2: delete `trash_param` and its trailing comma using `daw`.
+3. Inside the loop: change `cu"` inside `"unwanted string"` to `"valid item"`.
+4. Replace `var_to_change` on lines 11, 12, 13 using `*` then `cgn` and `.`.
+5. Comment out the 2 debug lines (15-16) using Visual Block `<Ctrl-v>`, `e`, `U// `.
+6. Add semicolons to the return statements using `A;` `<Esc>` and `.`.
+
+---> BOSS ARENA / PLAYGROUND <---
+int old_broken_func(std::vector<int>& items, double trash_param, int max_limit) {
+    if (items.empty()) {
+        return -1
+    }
+
+    int var_to_change = 0;
+    for (int x : items) {
+        if (x > max_limit) {
+            log_event("unwanted string");
+            var_to_change += x;
+            process_item(var_to_change);
+            total_sum += var_to_change;
+
+            std::cout << "DEBUG x: " << x << std::endl;
+            std::cout << "DEBUG total: " << total_sum << std::endl;
+        }
+    }
+
+    return var_to_change
+}
+
+================================================================================
+CONGRATULATIONS! You have completed the Vim Motion Dojo.
+Save this file, or reset it anytime using:
+  :!copy /Y "%:p:h\training_master.txt" "%:p"
+and reload with :e! to drill again!
+================================================================================
