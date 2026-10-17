@@ -16,6 +16,10 @@ pcall(vim.keymap.del, "x", "in")
 pcall(vim.keymap.del, "x", "an")
 pcall(vim.keymap.del, "o", "in")
 pcall(vim.keymap.del, "o", "an")
+pcall(vim.keymap.del, "x", "ii")
+pcall(vim.keymap.del, "x", "ai")
+pcall(vim.keymap.del, "o", "ii")
+pcall(vim.keymap.del, "o", "ai")
 pcall(vim.keymap.del, "n", "<leader>uh")
 map("n", "<leader>uh", "<nop>", { desc = "Disabled (Inlay hints off)" })
 
@@ -289,4 +293,17 @@ map("x", "'", wrap_selection("'", "'"), { desc = "Surround with ''" })
 map("x", "`", wrap_selection("`", "`"), { desc = "Surround with ``" })
 map("x", "<", wrap_selection("<", ">"), { desc = "Surround with <>" })
 map("x", ">", wrap_selection("<", ">"), { desc = "Surround with <>" })
+
+-- Re-apply on VeryLazy to ensure no LazyVim defaults or plugins override our mappings
+if not vim.g._colemak_keymaps_autocmd_set then
+  vim.g._colemak_keymaps_autocmd_set = true
+  vim.api.nvim_create_autocmd("User", {
+    pattern = "VeryLazy",
+    callback = function()
+      package.loaded["config.keymaps"] = nil
+      require("config.keymaps")
+    end,
+  })
+end
+
 
