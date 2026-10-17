@@ -1,6 +1,61 @@
 return {
   {
     "nvim-neo-tree/neo-tree.nvim",
+    keys = {
+      {
+        "<leader>e",
+        function()
+          local bufpath = vim.api.nvim_buf_get_name(0)
+          local dir
+          if bufpath and bufpath ~= "" and vim.fn.filereadable(bufpath) == 1 then
+            dir = vim.fs.root(bufpath, { ".git" }) or vim.fs.dirname(bufpath)
+          else
+            dir = LazyVim.root()
+          end
+          if dir:lower():find("system32") or dir:lower():find("program files\\neovim") then
+            dir = vim.fs.normalize(vim.fn.expand("$HOME/Documents"))
+          end
+          require("neo-tree.command").execute({ toggle = true, dir = dir, reveal = true })
+        end,
+        desc = "Explorer NeoTree (Root / File Dir)",
+      },
+      {
+        "<leader>E",
+        function()
+          local bufpath = vim.api.nvim_buf_get_name(0)
+          local dir = (bufpath and bufpath ~= "" and vim.fn.filereadable(bufpath) == 1) and vim.fs.dirname(bufpath) or vim.uv.cwd()
+          if dir:lower():find("system32") or dir:lower():find("program files\\neovim") then
+            dir = vim.fs.normalize(vim.fn.expand("$HOME/Documents"))
+          end
+          require("neo-tree.command").execute({ toggle = true, dir = dir, reveal = true })
+        end,
+        desc = "Explorer NeoTree (Current File Dir)",
+      },
+      {
+        "<leader>fe",
+        function()
+          local bufpath = vim.api.nvim_buf_get_name(0)
+          local dir = (bufpath and bufpath ~= "" and vim.fn.filereadable(bufpath) == 1) and (vim.fs.root(bufpath, { ".git" }) or vim.fs.dirname(bufpath)) or LazyVim.root()
+          if dir:lower():find("system32") or dir:lower():find("program files\\neovim") then
+            dir = vim.fs.normalize(vim.fn.expand("$HOME/Documents"))
+          end
+          require("neo-tree.command").execute({ toggle = true, dir = dir, reveal = true })
+        end,
+        desc = "Explorer NeoTree (Root / File Dir)",
+      },
+      {
+        "<leader>fE",
+        function()
+          local bufpath = vim.api.nvim_buf_get_name(0)
+          local dir = (bufpath and bufpath ~= "" and vim.fn.filereadable(bufpath) == 1) and vim.fs.dirname(bufpath) or vim.uv.cwd()
+          if dir:lower():find("system32") or dir:lower():find("program files\\neovim") then
+            dir = vim.fs.normalize(vim.fn.expand("$HOME/Documents"))
+          end
+          require("neo-tree.command").execute({ toggle = true, dir = dir, reveal = true })
+        end,
+        desc = "Explorer NeoTree (Current File Dir)",
+      },
+    },
     opts = {
       commands = {
         smart_left = function(state)
@@ -68,6 +123,11 @@ return {
         },
       },
       filesystem = {
+        bind_to_cwd = false,
+        follow_current_file = {
+          enabled = true,
+          leave_dirs_open = false,
+        },
         window = {
           mappings = {
             -- Ensure e, i, n, o work consistently in filesystem view

@@ -36,3 +36,19 @@ vim.api.nvim_create_user_command("TrainingReset", function()
     vim.notify("training_master.txt not found in directory: " .. dir, vim.log.levels.WARN, { title = "Vim Training Dojo" })
   end
 end, { desc = "Reset training.txt from training_master.txt" })
+
+-- Auto-correct CWD away from Windows System32 / Program Files when editing files
+vim.api.nvim_create_autocmd("BufEnter", {
+  desc = "Automatically change directory away from System32/Program Files",
+  callback = function()
+    local cwd = vim.uv.cwd():lower()
+    if cwd:find("system32") or cwd:find("program files\\neovim") then
+      local file = vim.api.nvim_buf_get_name(0)
+      if file and file ~= "" and vim.fn.filereadable(file) == 1 then
+        local dir = vim.fs.root(file, { ".git" }) or vim.fs.dirname(file)
+        pcall(vim.cmd.cd, dir)
+      end
+    end
+  end,
+})
+
