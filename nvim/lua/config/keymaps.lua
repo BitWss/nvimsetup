@@ -10,8 +10,8 @@ pcall(vim.keymap.del, "n", "<S-h>")
 pcall(vim.keymap.del, "n", "<S-l>")
 pcall(vim.keymap.del, "n", "H")
 pcall(vim.keymap.del, "n", "L")
-pcall(vim.keymap.del, "v", "J")
-pcall(vim.keymap.del, "v", "K")
+pcall(vim.keymap.del, "x", "J")
+pcall(vim.keymap.del, "x", "K")
 pcall(vim.keymap.del, "x", "in")
 pcall(vim.keymap.del, "x", "an")
 pcall(vim.keymap.del, "o", "in")
@@ -20,6 +20,10 @@ pcall(vim.keymap.del, "x", "ii")
 pcall(vim.keymap.del, "x", "ai")
 pcall(vim.keymap.del, "o", "ii")
 pcall(vim.keymap.del, "o", "ai")
+-- Ensure Select mode (snippets/tabstops) is 100% clean so typing printable keys replaces selection directly
+for _, k in ipairs({ "n", "e", "i", "o", "k", "K", "j", "J", "u", "U", "z", "Z", "h", "H" }) do
+  pcall(vim.keymap.del, "s", k)
+end
 pcall(vim.keymap.del, "n", "<leader>uh")
 map("n", "<leader>uh", "<nop>", { desc = "Disabled (Inlay hints off)" })
 
@@ -43,7 +47,8 @@ map("n", "<leader>uh", "<nop>", { desc = "Disabled (Inlay hints off)" })
 --   L -> open line above      (replaces O)
 
 -- Normal / Visual / Operator-pending mode: Movement & Displaced keys
-for _, mode in ipairs({ "n", "v", "x", "o" }) do
+-- NOTE: Use "x" (Visual only), NEVER "v" (Visual + Select)! Using "v" maps Select mode, which breaks snippet editing!
+for _, mode in ipairs({ "n", "x", "o" }) do
   -- Core cursor movement (with count and wrapped line support)
   map(mode, "n", "h", { nowait = true, desc = "Move Left" })
   map(mode, "e", "v:count == 0 ? 'gj' : 'j'", { expr = true, nowait = true, desc = "Move Down" })
@@ -60,14 +65,14 @@ end
 -- Insert Mode (u replaces i, matching physical QWERTY 'i' location on Colemak-DH)
 map("n", "u", "i", { desc = "Insert mode" })
 map("n", "U", "I", { desc = "Insert at beginning of line" })
-map("v", "U", "I", { desc = "Block insert" })
+map("x", "U", "I", { desc = "Block insert" })
 
 -- Text object 'inner' in visual and operator-pending modes (e.g. cuw, duw, vuw)
-map({ "o", "v", "x" }, "u", "i", { desc = "Inner text object" })
+map({ "o", "x" }, "u", "i", { desc = "Inner text object" })
 
 -- Undo & Redo (z is physically the same key on Colemak-DH and QWERTY)
-map({ "n", "v", "x" }, "z", "u", { nowait = true, desc = "Undo" })
-map({ "n", "v", "x" }, "Z", "<C-r>", { nowait = true, desc = "Redo" })
+map({ "n", "x" }, "z", "u", { nowait = true, desc = "Undo" })
+map({ "n", "x" }, "Z", "<C-r>", { nowait = true, desc = "Redo" })
 
 -- Viewport / Screen Centering (replaces zz / zt / zb displaced by Colemak z = Undo)
 map("n", "gzz", "zz", { desc = "Center screen on cursor" })
@@ -79,7 +84,7 @@ map("n", "h", "i", { desc = "Insert mode (alias)" })
 map("n", "H", "I", { desc = "Insert at beginning of line (alias)" })
 map("n", "l", "o", { desc = "Open line below" })
 map("n", "L", "O", { desc = "Open line above" })
-map("v", "h", "I", { desc = "Block insert (alias)" })
+map("x", "h", "I", { desc = "Block insert (alias)" })
 
 -- Window Navigation (Ctrl-w + n/e/i/o)
 map("n", "<C-w>n", "<C-w>h", { desc = "Window Left" })
