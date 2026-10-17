@@ -39,7 +39,7 @@ perform the exercise until the target outcome is achieved!
 TABLE OF CONTENTS:
   Module 01: Horizontal Word & Character Precision (w, W, b, B, k, K, f, F, t, T, ;, ,)
   Module 02: Line & Block Boundaries (0, ^, $, %)
-  Module 03: Vertical Navigation Speed (gg, G, {count}G, Ctrl-D, Ctrl-U, gz, gzt, gzb, {, })
+  Module 03: Vertical Navigation Speed (gg, G, {count}G, Ctrl-D, Ctrl-U, gzz, gzt, gzb, {, })
   Module 04: The Grammar of Deletion (d + motion, dw, dW, dd, D, d$, d0, df, dt)
   Module 05: The Superiority of Change (c + motion, cw, cW, cc, C, cf, ct, s, r, R)
   Module 06: Text Objects Superpowers (cuw, caw, cu", ca", cu(, ca(, cu{, ca{, cut)
@@ -145,7 +145,7 @@ Motions:
   Ctrl-u    : Scroll up half a screen
   {         : Jump backward to previous empty line / paragraph
   }         : Jump forward to next empty line / paragraph (BLAZING fast in code!)
-  gz   [zz] : Redraw screen so the current line is in the exact CENTER of your screen
+  gzz  [zz] : Redraw screen so the current line is in the exact CENTER of your screen
   gzt  [zt] : Redraw screen so the current line is at the TOP of your screen
   gzb  [zb] : Redraw screen so the current line is at the BOTTOM of your screen
 
@@ -153,7 +153,8 @@ Motions:
   In standard QWERTY Vim, screen centering is `zz`, `zt`, `zb`.
   HOWEVER, in your Colemak-DH layout, `z` is dedicated to UNDO (`z` = undo, `Z` = redo).
   Because pressing `z` once immediately triggers an undo without waiting for combos,
-  the screen centering commands are remapped to `gz` (center), `gzt` (top), and `gzb` (bottom)!
+  screen centering is mapped to `gzz` (center), `gzt` (top), and `gzb` (bottom).
+  All three commands are 3 keystrokes, eliminating prefix ambiguity so `gzz` triggers instantly!
 
 ---> PLAYGROUND 3.1: Paragraph Bouncing with { and } ---
 Place your cursor right here.
@@ -175,9 +176,9 @@ int calculate_difference(int a, int b) {
     return a - b;
 }
 
----> PLAYGROUND 3.2: Viewport Centering with gz [QWERTY: zz] ---
+---> PLAYGROUND 3.2: Viewport Centering with gzz [QWERTY: zz] ---
 Scroll your view until this line is near the bottom of your window.
-Now press `gz`.
+Now press `gzz`.
 Notice how the editor immediately brings this line into the dead center of your screen without touching undo!
 Now try `gzt` to bring it to the top, and `gzb` to bring it to the bottom!
 

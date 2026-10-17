@@ -62,7 +62,7 @@ map({ "n", "v" }, "z", "u", { desc = "Undo" })
 map({ "n", "v" }, "Z", "<C-r>", { desc = "Redo" })
 
 -- Viewport / Screen Centering (replaces zz / zt / zb displaced by Colemak z = Undo)
-map("n", "gz", "zz", { desc = "Center screen on cursor" })
+map("n", "gzz", "zz", { desc = "Center screen on cursor" })
 map("n", "gzt", "zt", { desc = "Top screen on cursor" })
 map("n", "gzb", "zb", { desc = "Bottom screen on cursor" })
 
