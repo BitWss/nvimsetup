@@ -450,15 +450,39 @@ Line 4: std::cout << bad_var << '\n';
 
 
 ================================================================================
-MODULE 10: VISUAL BLOCK MULTICURSOR POWERS (<Ctrl-v>)
+MODULE 10: VISUAL MODE & VISUAL BLOCK POWERS (v, V, Ctrl-v)
 ================================================================================
-Who needs multiple cursors when you have Visual Block mode?
-Commands:
-  v       : Character visual mode
-  V       : Line visual mode
-  Ctrl-v  : Column / Block visual mode
-  o       : Move cursor to the other diagonal corner of visual selection!
-  gv      : Reselect the last visual area!
+Visual mode lets you highlight text with exact precision.
+In Colemak-DH, your navigation keys (neio) expand and shrink the selection:
+
+Motions in Visual Mode:
+  n         : Extend / shrink selection Left
+  e         : Extend / shrink selection Down
+  i         : Extend / shrink selection Up
+  o         : Extend / shrink selection Right
+  v         : Characterwise visual mode
+  V         : Linewise visual mode
+  Ctrl-v    : Column / Block visual mode
+  gv        : Reselect the last visual area!
+
+COLEMAK-DH NOTE:
+In standard Vim, 'i' is the text-object prefix (like iw). In your Colemak-DH setup:
+- 'u' is dedicated to inner text objects (vuw = select inner word, cuw = change inner word).
+- 'i' is 100% dedicated to MOVING UP, so pressing 'i' in visual mode instantly moves up!
+
+--- Drill 10.0: Smooth Visual Navigation with neio ---
+---> PLAYGROUND 10.0 <---
+1. Place cursor on the word `TARGET_ZONE` on Line 3 below.
+2. Press `v` to start visual selection.
+3. Press `i` to extend selection UP to Line 2.
+4. Press `e` twice to extend selection DOWN to Line 4.
+5. Press `n` to extend LEFT, press `o` to extend RIGHT.
+Notice how `neio` navigates seamlessly in Visual mode! Press `<Esc>` to exit visual mode.
+Line 1: const int TOP_BOUNDARY = 0;
+Line 2: const int UPPER_BUFFER = 100;
+Line 3: const int TARGET_ZONE  = 250;
+Line 4: const int LOWER_BUFFER = 400;
+Line 5: const int BOT_BOUNDARY = 500;
 
 --- Drill 10.1: Comment Out 5 Lines Simultaneously ---
 ---> PLAYGROUND 10.1 <---

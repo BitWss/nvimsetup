@@ -12,6 +12,10 @@ pcall(vim.keymap.del, "n", "H")
 pcall(vim.keymap.del, "n", "L")
 pcall(vim.keymap.del, "v", "J")
 pcall(vim.keymap.del, "v", "K")
+pcall(vim.keymap.del, "x", "in")
+pcall(vim.keymap.del, "x", "an")
+pcall(vim.keymap.del, "o", "in")
+pcall(vim.keymap.del, "o", "an")
 pcall(vim.keymap.del, "n", "<leader>uh")
 map("n", "<leader>uh", "<nop>", { desc = "Disabled (Inlay hints off)" })
 
@@ -35,7 +39,7 @@ map("n", "<leader>uh", "<nop>", { desc = "Disabled (Inlay hints off)" })
 --   L -> open line above      (replaces O)
 
 -- Normal / Visual / Operator-pending mode: Movement & Displaced keys
-for _, mode in ipairs({ "n", "v", "o" }) do
+for _, mode in ipairs({ "n", "v", "x", "o" }) do
   -- Core cursor movement (with count and wrapped line support)
   map(mode, "n", "h", { desc = "Move Left" })
   map(mode, "e", "v:count == 0 ? 'gj' : 'j'", { expr = true, desc = "Move Down" })
