@@ -93,9 +93,16 @@ map("n", "<leader>bn", "<cmd>bnext<CR>", { desc = "Next buffer" })
 map("n", "<leader>bp", "<cmd>bprevious<CR>", { desc = "Prev buffer" })
 map("n", "<leader>bd", "<cmd>bdelete<CR>", { desc = "Delete buffer" })
 
--- Quick Save & Clear Highlights
+-- Quick Save, Clear Highlights & Dismiss Popups
 map("n", "<leader>w", "<cmd>w<CR>", { desc = "Save file" })
-map("n", "<leader>ch", "<cmd>nohlsearch<CR>", { desc = "Clear highlight" })
+map("n", "<leader>ch", function()
+  vim.cmd("nohlsearch")
+  pcall(function() require("noice").cmd("dismiss") end)
+end, { desc = "Clear highlights & dismiss popups" })
+map("n", "<Esc>", function()
+  vim.cmd("nohlsearch")
+  pcall(function() require("noice").cmd("dismiss") end)
+end, { desc = "Clear highlights & dismiss popups" })
 
 -- LSP Hover (since 'K' is remapped to 'E' - End of WORD)
 map("n", "gh", vim.lsp.buf.hover, { desc = "Hover Documentation" })
