@@ -39,7 +39,7 @@ perform the exercise until the target outcome is achieved!
 TABLE OF CONTENTS:
   Module 01: Horizontal Word & Character Precision (w, W, b, B, k, K, f, F, t, T, ;, ,)
   Module 02: Line & Block Boundaries (0, ^, $, %)
-  Module 03: Vertical Navigation Speed (gg, G, {count}G, Ctrl-D, Ctrl-U, zz, zt, zb, {, })
+  Module 03: Vertical Navigation Speed (gg, G, {count}G, Ctrl-D, Ctrl-U, gz, gzt, gzb, {, })
   Module 04: The Grammar of Deletion (d + motion, dw, dW, dd, D, d$, d0, df, dt)
   Module 05: The Superiority of Change (c + motion, cw, cW, cc, C, cf, ct, s, r, R)
   Module 06: Text Objects Superpowers (cuw, caw, cu", ca", cu(, ca(, cu{, ca{, cut)
@@ -65,7 +65,7 @@ Motions:
   w       : Jump forward to start of next word (punctuation breaks words)
   b       : Jump backward to start of previous word
   k  [e]  : Jump forward to END of current/next word
-  W       : Jump forward to start of next WORD (space-delimited only! Ignores symbols!)
+  W       : Jump forward to start of next WORD (space-delimited only! Ignores next symbols!)
   B       : Jump backward to start of previous WORD
   K  [E]  : Jump forward to END of current/next WORD
   f{char} : Find {char} forward on the current line (cursor lands ON {char})
@@ -118,7 +118,8 @@ not `0`, so you don't land on useless leading spaces or tabs!
 2. Press `0` -> Notice you land on column 0 (before indentation).
 3. Press `^` -> Notice you land directly on the 'c' in `const`.
 4. Press `$` -> Notice you land on the semicolon at the end.
-Line:             const double PI_APPROXIMATION = 3.141592653589793;
+Line:
+        const double PI_APPROXIMATION = 3.141592653589793;
 
 ---> PLAYGROUND 2.2: Bracket Bouncing with % ---
 1. Place cursor on the opening `{` on line 1 below.
@@ -144,9 +145,15 @@ Motions:
   Ctrl-u    : Scroll up half a screen
   {         : Jump backward to previous empty line / paragraph
   }         : Jump forward to next empty line / paragraph (BLAZING fast in code!)
-  zz        : Redraw screen so the current line is in the exact CENTER of your screen
-  zt        : Redraw screen so the current line is at the TOP of your screen
-  zb        : Redraw screen so the current line is at the BOTTOM of your screen
+  gz   [zz] : Redraw screen so the current line is in the exact CENTER of your screen
+  gzt  [zt] : Redraw screen so the current line is at the TOP of your screen
+  gzb  [zb] : Redraw screen so the current line is at the BOTTOM of your screen
+
+  IMPORTANT COLEMAK-DH NOTE:
+  In standard QWERTY Vim, screen centering is `zz`, `zt`, `zb`.
+  HOWEVER, in your Colemak-DH layout, `z` is dedicated to UNDO (`z` = undo, `Z` = redo).
+  Because pressing `z` once immediately triggers an undo without waiting for combos,
+  the screen centering commands are remapped to `gz` (center), `gzt` (top), and `gzb` (bottom)!
 
 ---> PLAYGROUND 3.1: Paragraph Bouncing with { and } ---
 Place your cursor right here.
@@ -168,10 +175,11 @@ int calculate_difference(int a, int b) {
     return a - b;
 }
 
----> PLAYGROUND 3.2: Viewport Centering with zz ---
+---> PLAYGROUND 3.2: Viewport Centering with gz [QWERTY: zz] ---
 Scroll your view until this line is near the bottom of your window.
-Now press `zz`.
-Notice how the editor immediately brings this line into the dead center of your screen!
+Now press `gz`.
+Notice how the editor immediately brings this line into the dead center of your screen without touching undo!
+Now try `gzt` to bring it to the top, and `gzb` to bring it to the bottom!
 
 
 ================================================================================

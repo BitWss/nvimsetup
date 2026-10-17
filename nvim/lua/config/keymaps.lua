@@ -61,6 +61,11 @@ map({ "o", "v" }, "u", "i", { desc = "Inner text object" })
 map({ "n", "v" }, "z", "u", { desc = "Undo" })
 map({ "n", "v" }, "Z", "<C-r>", { desc = "Redo" })
 
+-- Viewport / Screen Centering (replaces zz / zt / zb displaced by Colemak z = Undo)
+map("n", "gz", "zz", { desc = "Center screen on cursor" })
+map("n", "gzt", "zt", { desc = "Top screen on cursor" })
+map("n", "gzb", "zb", { desc = "Bottom screen on cursor" })
+
 -- Keep h/H as alternative Insert, and l/L for line creation
 map("n", "h", "i", { desc = "Insert mode (alias)" })
 map("n", "H", "I", { desc = "Insert at beginning of line (alias)" })
