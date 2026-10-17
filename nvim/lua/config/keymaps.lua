@@ -41,16 +41,16 @@ map("n", "<leader>uh", "<nop>", { desc = "Disabled (Inlay hints off)" })
 -- Normal / Visual / Operator-pending mode: Movement & Displaced keys
 for _, mode in ipairs({ "n", "v", "x", "o" }) do
   -- Core cursor movement (with count and wrapped line support)
-  map(mode, "n", "h", { desc = "Move Left" })
-  map(mode, "e", "v:count == 0 ? 'gj' : 'j'", { expr = true, desc = "Move Down" })
-  map(mode, "i", "v:count == 0 ? 'gk' : 'k'", { expr = true, desc = "Move Up" })
-  map(mode, "o", "l", { desc = "Move Right" })
+  map(mode, "n", "h", { nowait = true, desc = "Move Left" })
+  map(mode, "e", "v:count == 0 ? 'gj' : 'j'", { expr = true, nowait = true, desc = "Move Down" })
+  map(mode, "i", "v:count == 0 ? 'gk' : 'k'", { expr = true, nowait = true, desc = "Move Up" })
+  map(mode, "o", "l", { nowait = true, desc = "Move Right" })
 
   -- Displaced commands
-  map(mode, "k", "e", { desc = "End of word" })
-  map(mode, "K", "E", { desc = "End of WORD" })
-  map(mode, "j", "n", { desc = "Next search match" })
-  map(mode, "J", "N", { desc = "Previous search match" })
+  map(mode, "k", "e", { nowait = true, desc = "End of word" })
+  map(mode, "K", "E", { nowait = true, desc = "End of WORD" })
+  map(mode, "j", "n", { nowait = true, desc = "Next search match" })
+  map(mode, "J", "N", { nowait = true, desc = "Previous search match" })
 end
 
 -- Insert Mode (u replaces i, matching physical QWERTY 'i' location on Colemak-DH)
@@ -59,11 +59,11 @@ map("n", "U", "I", { desc = "Insert at beginning of line" })
 map("v", "U", "I", { desc = "Block insert" })
 
 -- Text object 'inner' in visual and operator-pending modes (e.g. cuw, duw, vuw)
-map({ "o", "v" }, "u", "i", { desc = "Inner text object" })
+map({ "o", "v", "x" }, "u", "i", { desc = "Inner text object" })
 
 -- Undo & Redo (z is physically the same key on Colemak-DH and QWERTY)
-map({ "n", "v" }, "z", "u", { desc = "Undo" })
-map({ "n", "v" }, "Z", "<C-r>", { desc = "Redo" })
+map({ "n", "v", "x" }, "z", "u", { nowait = true, desc = "Undo" })
+map({ "n", "v", "x" }, "Z", "<C-r>", { nowait = true, desc = "Redo" })
 
 -- Viewport / Screen Centering (replaces zz / zt / zb displaced by Colemak z = Undo)
 map("n", "gzz", "zz", { desc = "Center screen on cursor" })
