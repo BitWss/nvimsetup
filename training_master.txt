@@ -177,10 +177,14 @@ int calculate_difference(int a, int b) {
 }
 
 ---> PLAYGROUND 3.2: Viewport Centering with gzz [QWERTY: zz] ---
-Scroll your view until this line is near the bottom of your window.
-Now press `gzz`.
-Notice how the editor immediately brings this line into the dead center of your screen without touching undo!
-Now try `gzt` to bring it to the top, and `gzb` to bring it to the bottom!
+NOTE: Neovim has `scrolloff = 8` enabled, which already keeps your cursor
+near the vertical center as you type. If you are already centered, `gzz` won't move!
+To visibly test `gzz`, `gzt`, and `gzb`:
+1. Place cursor on the line below.
+2. Press `gzt` -> Notice the line immediately snaps to the TOP edge of the window!
+3. Now press `gzz` -> Notice the line immediately snaps to the exact CENTER!
+4. Now press `gzb` -> Notice the line immediately snaps to the BOTTOM edge!
+Line: int demo_viewport_centering = 12345;
 
 
 ================================================================================
@@ -207,7 +211,7 @@ Commands:
 --- Drill 4.1: Delete Words and Remnants ---
 ---> PLAYGROUND 4.1 <---
 Exercise A: Place cursor on the 't' in `terrible_` and press `dw` to remove it.
-Before: int good_value = terrible_ actual_value;
+Before: int good_value = terrible_actual_value;
 Target: int good_value = actual_value;
 
 Exercise B: Place cursor on the first quote `"` below and press `d$` or `D`.

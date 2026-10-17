@@ -23,7 +23,7 @@ vim.api.nvim_create_autocmd({ "FileType", "BufEnter", "BufWinEnter" }, {
   end,
 })
 
--- User command to instantly reset training.txt from training_master.txt
+-- User command to instantly reset training.txt from training_master.txt & reload keymaps
 vim.api.nvim_create_user_command("TrainingReset", function()
   local dir = vim.fn.expand("%:p:h")
   local master = dir .. "/training_master.txt"
@@ -31,11 +31,23 @@ vim.api.nvim_create_user_command("TrainingReset", function()
     local content = vim.fn.readfile(master)
     vim.api.nvim_buf_set_lines(0, 0, -1, false, content)
     vim.cmd("write")
-    vim.notify("Training playground successfully reset from master copy!", vim.log.levels.INFO, { title = "Vim Training Dojo" })
+    -- Force reload keymaps into running Neovim instance
+    package.loaded["config.keymaps"] = nil
+    require("config.keymaps")
+    vim.notify("Training playground & latest keymaps successfully reloaded!", vim.log.levels.INFO, { title = "Vim Training Dojo" })
   else
     vim.notify("training_master.txt not found in directory: " .. dir, vim.log.levels.WARN, { title = "Vim Training Dojo" })
   end
-end, { desc = "Reset training.txt from training_master.txt" })
+end, { desc = "Reset training.txt and reload keymaps" })
+
+-- User command to reload keymaps on the fly without restarting Neovim
+vim.api.nvim_create_user_command("ReloadConfig", function()
+  package.loaded["config.keymaps"] = nil
+  require("config.keymaps")
+  package.loaded["plugins.neotree"] = nil
+  vim.notify("Neovim keymaps successfully reloaded!", vim.log.levels.INFO, { title = "Config" })
+end, { desc = "Reload Neovim keymaps" })
+
 
 -- Auto-correct CWD away from Windows System32 / Program Files when editing files
 vim.api.nvim_create_autocmd("BufEnter", {
