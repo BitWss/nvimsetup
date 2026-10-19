@@ -246,12 +246,18 @@ local function cf_run_file()
     vim.cmd("w")
   end)
 
-  -- 2. Kill any lingering process of this executable so Windows releases the binary file lock
-  if is_win then
-    pcall(vim.fn.system, string.format('taskkill /F /IM "%s.exe" /T 2>nul', fname))
+  -- 2. Terminate any previous terminal jobs and delete all terminal buffers
+  for _, b in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_valid(b) and vim.bo[b].buftype == "terminal" then
+      local chan = vim.bo[b].channel
+      if chan and chan > 0 then
+        pcall(vim.fn.jobstop, chan)
+      end
+      pcall(vim.api.nvim_buf_delete, b, { force = true })
+    end
   end
 
-  -- 3. Close any existing terminal window in the current tab to prevent stacked splits
+  -- 3. Close any remaining terminal windows in the current tab to prevent stacked splits
   local current_tab = vim.api.nvim_get_current_tabpage()
   for _, win in ipairs(vim.api.nvim_tabpage_list_wins(current_tab)) do
     local b = vim.api.nvim_win_get_buf(win)
@@ -260,14 +266,10 @@ local function cf_run_file()
     end
   end
 
-  -- 4. Delete old cf-runner / terminal buffers to keep buffer list clean
-  for _, b in ipairs(vim.api.nvim_list_bufs()) do
-    if vim.api.nvim_buf_is_valid(b) and vim.bo[b].buftype == "terminal" then
-      local bname = vim.api.nvim_buf_get_name(b)
-      if bname:find("cf%-runner") or bname:find(fname .. "%.exe") or bname:find("cmd%.exe") then
-        pcall(vim.api.nvim_buf_delete, b, { force = true })
-      end
-    end
+  -- 4. On Windows, kill any lingering binary AND cf-runner process so all file locks are released
+  if is_win then
+    pcall(vim.fn.system, string.format('taskkill /F /IM "%s.exe" /IM "cf-runner.exe" /T 2>nul', fname))
+    vim.uv.sleep(50)
   end
 
   -- 5. Ensure output directory exists in project folder
@@ -277,8 +279,9 @@ local function cf_run_file()
   end
 
   local out_exe = out_dir .. (is_win and ("\\" .. fname .. ".exe") or ("/" .. fname))
-  -- Remove previous binary before compiling so ld.exe creates a clean file
-  pcall(vim.fn.delete, out_exe)
+  -- Note: Do NOT call vim.fn.delete(out_exe). On Windows, deleting a freshly closed binary
+  -- puts it into DELETE_PENDING state, which causes ERROR_ACCESS_DENIED when g++ tries to write it.
+  -- g++ / ld.exe will safely overwrite it.
 
   -- 6. WinLibs GCC paths with C++23 flags
   local mingw_root = "C:/Users/bit/AppData/Local/Microsoft/WinGet/Packages/BrechtSanders.WinLibs.POSIX.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe/mingw64"
@@ -299,7 +302,9 @@ local function cf_run_file()
   local flags = is_cpp and "-std=c++23 -O2 -fno-lto -Wall -Wextra -DLOCAL" or "-O2 -fno-lto -Wall -Wextra -DLOCAL"
 
   local compile_cmd = string.format('%s %s "%s" -o "%s"', compiler, flags, file, out_exe)
-  local run_cmd = string.format('cf-runner "%s"', out_exe)
+  -- On Windows, give 30ms via ping between compile and run so ld.exe handle release and antivirus scan settle
+  local run_cmd = is_win and string.format('(ping -n 1 127.0.0.1 >nul) && cf-runner "%s"', out_exe)
+    or string.format('cf-runner "%s"', out_exe)
   local full_cmd = is_win and string.format('cd /d "%s" && %s && %s', dir, compile_cmd, run_cmd)
     or string.format('cd "%s" && %s && %s', dir, compile_cmd, run_cmd)
 
