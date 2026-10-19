@@ -214,9 +214,24 @@ return {
         "sort_text",
       }
 
+      opts.completion = opts.completion or {}
+      opts.completion.trigger = opts.completion.trigger or {}
+      opts.completion.trigger.show_in_snippet = false
+
       opts.keymap = opts.keymap or {}
       opts.keymap.preset = "super-tab"
       opts.keymap["<CR>"] = { "fallback" }
+      opts.keymap["<Tab>"] = {
+        function(cmp)
+          if cmp.snippet_active() then
+            return cmp.snippet_forward()
+          end
+          return cmp.select_and_accept()
+        end,
+        "snippet_forward",
+        "fallback",
+      }
+      opts.keymap["<S-Tab>"] = { "snippet_backward", "fallback" }
 
       opts.sources = opts.sources or {}
       opts.sources.providers = opts.sources.providers or {}
