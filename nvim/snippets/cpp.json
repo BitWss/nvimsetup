@@ -1,4 +1,22 @@
 {
+  "for": {
+    "prefix": "for",
+    "body": [
+      "for (${1:int} ${2:i} = ${3:0}; $2 < ${4:n}; ++$2) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "for (${1:int} ${2:i} = ${3:0}; $2 < ${4:n}; ++$2)"
+  },
+  "forr": {
+    "prefix": "forr",
+    "body": [
+      "for (${1:int} ${2:i} = ${3:n} - 1; $2 >= ${4:0}; --$2) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "for (${1:int} ${2:i} = ${3:n} - 1; $2 >= ${4:0}; --$2)"
+  },
   "CP Minimal Template": {
     "prefix": "cp",
     "body": [

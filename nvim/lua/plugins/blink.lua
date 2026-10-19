@@ -334,10 +334,37 @@ return {
       opts.sources.providers.snippets.transform_items = function(ctx, items)
         local line_nr = ctx.cursor[1]
         local filtered = {}
+        local seen_for = false
+        local seen_forr = false
+
         for _, item in ipairs(items) do
           if item.label == "cp" or item.label == "cp1" then
             if line_nr <= 3 then
               item.score_offset = 100
+              table.insert(filtered, item)
+            end
+          elseif item.label == "for" then
+            local text = (item.textEdit and item.textEdit.newText) or item.insertText or ""
+            if text:find("%$2%+%+") or text:find("i%+%+") or text:find("size_t") then
+              local updated = "for (${1:int} ${2:i} = ${3:0}; $2 < ${4:n}; ++$2) {\n\t$0\n}"
+              item.insertText = updated
+              if item.textEdit then item.textEdit.newText = updated end
+              item.description = "for (${1:int} ${2:i} = ${3:0}; $2 < ${4:n}; ++$2)"
+            end
+            if not seen_for then
+              seen_for = true
+              table.insert(filtered, item)
+            end
+          elseif item.label == "forr" then
+            local text = (item.textEdit and item.textEdit.newText) or item.insertText or ""
+            if text:find("%$2%-%-") or text:find("i%-%-") or text:find("size_t") then
+              local updated = "for (${1:int} ${2:i} = ${3:n} - 1; $2 >= ${4:0}; --$2) {\n\t$0\n}"
+              item.insertText = updated
+              if item.textEdit then item.textEdit.newText = updated end
+              item.description = "for (${1:int} ${2:i} = ${3:n} - 1; $2 >= ${4:0}; --$2)"
+            end
+            if not seen_forr then
+              seen_forr = true
               table.insert(filtered, item)
             end
           else
