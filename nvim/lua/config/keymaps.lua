@@ -199,37 +199,88 @@ local function warm_winlibs_smartlocker(mingw_root)
   end
 end
 
+-- Remember the last compiled C/C++ buffer so re-running from terminal window works seamlessly
+local last_c_cpp_buf = nil
+
 -- Compile single C/C++ file quickly and run it with cf-runner in a split terminal
 local function cf_run_file()
-  local file = vim.fn.expand("%:p")
-  local dir = vim.fn.expand("%:p:h")
-  local fname = vim.fn.expand("%:t:r")
-  local ext = vim.fn.expand("%:e"):lower()
-  local is_win = vim.fn.has("win32") == 1
+  local cur_buf = vim.api.nvim_get_current_buf()
+  local cur_file = vim.api.nvim_buf_get_name(cur_buf)
+  local cur_ext = vim.fn.fnamemodify(cur_file, ":e"):lower()
+  local is_c_cpp = (cur_ext == "cpp" or cur_ext == "cc" or cur_ext == "cxx" or cur_ext == "c")
 
-  -- Close any existing cf-runner terminal buffers so the previous .exe isn't locked
-  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-    if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buftype == "terminal" then
-      local bname = vim.api.nvim_buf_get_name(buf)
-      if bname:find("cf%-runner") or bname:find(fname .. "%.exe") then
-        pcall(vim.api.nvim_buf_delete, buf, { force = true })
+  local target_buf = nil
+  if is_c_cpp and vim.bo[cur_buf].buftype ~= "terminal" then
+    target_buf = cur_buf
+    last_c_cpp_buf = cur_buf
+  elseif last_c_cpp_buf and vim.api.nvim_buf_is_valid(last_c_cpp_buf) then
+    target_buf = last_c_cpp_buf
+  else
+    -- Search all windows in current tab for an open C/C++ file
+    for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+      local b = vim.api.nvim_win_get_buf(win)
+      local bname = vim.api.nvim_buf_get_name(b)
+      local bext = vim.fn.fnamemodify(bname, ":e"):lower()
+      if (bext == "cpp" or bext == "cc" or bext == "cxx" or bext == "c") and vim.bo[b].buftype ~= "terminal" then
+        target_buf = b
+        last_c_cpp_buf = b
+        break
       end
     end
   end
 
-  -- Ensure output directory exists in project folder
+  if not target_buf or not vim.api.nvim_buf_is_valid(target_buf) then
+    vim.notify("No active C/C++ file found to compile.", vim.log.levels.WARN, { title = "Compile & Run" })
+    return
+  end
+
+  local file = vim.api.nvim_buf_get_name(target_buf)
+  local dir = vim.fn.fnamemodify(file, ":h")
+  local fname = vim.fn.fnamemodify(file, ":t:r")
+  local ext = vim.fn.fnamemodify(file, ":e"):lower()
+  local is_win = vim.fn.has("win32") == 1
+  local is_cpp = (ext == "cpp" or ext == "cc" or ext == "cxx")
+
+  -- 1. Save the target source file
+  pcall(vim.api.nvim_buf_call, target_buf, function()
+    vim.cmd("w")
+  end)
+
+  -- 2. Kill any lingering process of this executable so Windows releases the binary file lock
+  if is_win then
+    pcall(vim.fn.system, string.format('taskkill /F /IM "%s.exe" /T 2>nul', fname))
+  end
+
+  -- 3. Close any existing terminal window in the current tab to prevent stacked splits
+  local current_tab = vim.api.nvim_get_current_tabpage()
+  for _, win in ipairs(vim.api.nvim_tabpage_list_wins(current_tab)) do
+    local b = vim.api.nvim_win_get_buf(win)
+    if vim.api.nvim_buf_is_valid(b) and vim.bo[b].buftype == "terminal" then
+      pcall(vim.api.nvim_win_close, win, true)
+    end
+  end
+
+  -- 4. Delete old cf-runner / terminal buffers to keep buffer list clean
+  for _, b in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_valid(b) and vim.bo[b].buftype == "terminal" then
+      local bname = vim.api.nvim_buf_get_name(b)
+      if bname:find("cf%-runner") or bname:find(fname .. "%.exe") or bname:find("cmd%.exe") then
+        pcall(vim.api.nvim_buf_delete, b, { force = true })
+      end
+    end
+  end
+
+  -- 5. Ensure output directory exists in project folder
   local out_dir = dir .. (is_win and "\\output" or "/output")
   if vim.fn.isdirectory(out_dir) == 0 then
-    vim.fn.mkdir(out_dir, "p")
+    pcall(vim.fn.mkdir, out_dir, "p")
   end
 
   local out_exe = out_dir .. (is_win and ("\\" .. fname .. ".exe") or ("/" .. fname))
   -- Remove previous binary before compiling so ld.exe creates a clean file
   pcall(vim.fn.delete, out_exe)
 
-  local is_cpp = (ext == "cpp" or ext == "cc" or ext == "cxx")
-
-  -- WinLibs GCC paths with C++23 flags
+  -- 6. WinLibs GCC paths with C++23 flags
   local mingw_root = "C:/Users/bit/AppData/Local/Microsoft/WinGet/Packages/BrechtSanders.WinLibs.POSIX.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe/mingw64"
   local winlibs_gpp = mingw_root .. "/bin/g++.exe"
   local winlibs_gcc = mingw_root .. "/bin/gcc.exe"
@@ -252,8 +303,9 @@ local function cf_run_file()
   local full_cmd = is_win and string.format('cd /d "%s" && %s && %s', dir, compile_cmd, run_cmd)
     or string.format('cd "%s" && %s && %s', dir, compile_cmd, run_cmd)
 
-  vim.cmd("w")
+  -- 7. Open single bottom terminal split and enter insert mode immediately
   vim.cmd("botright split | resize 15 | terminal " .. full_cmd)
+  vim.cmd("startinsert")
 end
 
 map("n", "<leader>cc", cf_run_file, { desc = "Compile & Run with cf-runner (C++23)" })
@@ -262,6 +314,35 @@ map("i", "<F6>", function()
   vim.cmd("stopinsert")
   cf_run_file()
 end, { desc = "Compile & Run with cf-runner (F6)" })
+
+-- Terminal Mode: Instant Paste via nvim_paste (bypasses Windows ConPTY per-character redraw lag)
+map("t", "<C-v>", function()
+  local text = vim.fn.getreg("+")
+  if text and text ~= "" then
+    vim.api.nvim_paste(text, true, -1)
+  end
+end, { desc = "Instant Paste into Terminal" })
+
+map("t", "<C-S-v>", function()
+  local text = vim.fn.getreg("+")
+  if text and text ~= "" then
+    vim.api.nvim_paste(text, true, -1)
+  end
+end, { desc = "Instant Paste into Terminal" })
+
+-- Normal mode in terminal: pressing 'p' enters insert and pastes instantly
+vim.api.nvim_create_autocmd("TermOpen", {
+  group = vim.api.nvim_create_augroup("TerminalInstantPaste", { clear = true }),
+  callback = function(ev)
+    vim.keymap.set("n", "p", function()
+      local text = vim.fn.getreg("+")
+      if text and text ~= "" then
+        vim.cmd("startinsert")
+        vim.api.nvim_paste(text, true, -1)
+      end
+    end, { buffer = ev.buf, desc = "Instant Paste into Terminal" })
+  end,
+})
 
 -- ---------------------------------------------------------------------------
 -- 4. Instant Visual Surround (Wrap selected text in (), [], {}, "", '')
