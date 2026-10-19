@@ -118,6 +118,10 @@ return {
           -- 'o' = Right (expand folder / enter / open file)
           ["o"] = "smart_right",
 
+          -- Go up one directory in file tree (parent directory)
+          ["-"] = "navigate_up",
+          ["<bs>"] = "navigate_up",
+
           -- Move displaced Neo-tree window actions
           ["E"] = "toggle_auto_expand_width",
         },
@@ -135,6 +139,10 @@ return {
             ["i"] = "none",
             ["n"] = "smart_left",
             ["o"] = "smart_right",
+
+            -- Go up one directory
+            ["-"] = "navigate_up",
+            ["<bs>"] = "navigate_up",
 
             -- Free up displaced 'o' prefixes from default neo-tree
             ["oc"] = "none",
