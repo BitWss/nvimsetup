@@ -31,6 +31,7 @@ return {
             usePlaceholders = true,
             completeUnimported = true,
             clangdFileStatus = true,
+            fallbackFlags = { "-std=c++23" },
           },
         },
       },
