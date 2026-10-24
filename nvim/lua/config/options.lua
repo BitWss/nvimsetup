@@ -21,3 +21,21 @@ opt.updatetime = 250
 opt.timeoutlen = 300
 opt.termguicolors = true
 opt.undofile = true
+
+-- Termux / Android Clipboard Integration (sync with system clipboard)
+if vim.fn.isdirectory("/data/data/com.termux") == 1 then
+  if vim.fn.executable("termux-clipboard-get") == 1 then
+    vim.g.clipboard = {
+      name = "termux-clipboard",
+      copy = {
+        ["+"] = "termux-clipboard-set",
+        ["*"] = "termux-clipboard-set",
+      },
+      paste = {
+        ["+"] = "termux-clipboard-get",
+        ["*"] = "termux-clipboard-get",
+      },
+      cache_enabled = 0,
+    }
+  end
+end

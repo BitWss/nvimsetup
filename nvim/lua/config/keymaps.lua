@@ -293,13 +293,25 @@ local function cf_run_file()
   end
 
   local compiler
-  if is_cpp then
-    compiler = vim.fn.filereadable(winlibs_gpp) == 1 and ('"' .. winlibs_gpp .. '"') or "g++"
+  if is_win then
+    if is_cpp then
+      compiler = vim.fn.filereadable(winlibs_gpp) == 1 and ('"' .. winlibs_gpp .. '"') or "g++"
+    else
+      compiler = vim.fn.filereadable(winlibs_gcc) == 1 and ('"' .. winlibs_gcc .. '"') or "gcc"
+    end
   else
-    compiler = vim.fn.filereadable(winlibs_gcc) == 1 and ('"' .. winlibs_gcc .. '"') or "gcc"
+    -- Linux / Termux: detect clang++ or g++ from $PATH
+    if is_cpp then
+      compiler = (vim.fn.executable("clang++") == 1 and "clang++") or (vim.fn.executable("g++") == 1 and "g++") or "c++"
+    else
+      compiler = (vim.fn.executable("clang") == 1 and "clang") or (vim.fn.executable("gcc") == 1 and "gcc") or "cc"
+    end
   end
 
-  local flags = is_cpp and "-std=c++23 -O2 -fno-lto -Wall -Wextra -DLOCAL" or "-O2 -fno-lto -Wall -Wextra -DLOCAL"
+  local flags = is_cpp and "-std=c++23 -O2 -Wall -Wextra -DLOCAL" or "-O2 -Wall -Wextra -DLOCAL"
+  if is_win then
+    flags = flags .. " -fno-lto"
+  end
 
   local compile_cmd = string.format('%s %s "%s" -o "%s"', compiler, flags, file, out_exe)
   -- On Windows, give 30ms via ping between compile and run so ld.exe handle release and antivirus scan settle

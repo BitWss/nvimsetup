@@ -189,9 +189,10 @@ return {
     opts = function(_, opts)
       vim.schedule(ensure_accept_hook)
 
+      local is_termux = vim.fn.isdirectory("/data/data/com.termux") == 1
       opts = opts or {}
       opts.fuzzy = opts.fuzzy or {}
-      opts.fuzzy.implementation = "prefer_rust_with_warning"
+      opts.fuzzy.implementation = is_termux and "lua" or "prefer_rust_with_warning"
       opts.fuzzy.sorts = {
         -- 1. Dynamically boost most recently chosen / used items to the top (MRU)
         function(a, b)
