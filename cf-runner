@@ -1,0 +1,41 @@
+#!/usr/bin/env sh
+# ==============================================================================
+# cf-runner for Termux / Linux
+# ==============================================================================
+
+if [ -z "$1" ]; then
+    echo "Usage: cf-runner <executable> [args...]"
+    exit 1
+fi
+
+EXE="$1"
+shift
+
+# Check if input.txt exists in current directory and has content
+if [ -f "input.txt" ] && [ -s "input.txt" ]; then
+    echo "[i] Input source: input.txt"
+    echo "----------------------------------------"
+    START_MS=$(date +%s%3N 2>/dev/null || date +%s)
+    "$EXE" "$@" < input.txt
+    EXIT_CODE=$?
+    END_MS=$(date +%s%3N 2>/dev/null || date +%s)
+else
+    echo "[i] Input source: Console (Enter test input in terminal)..."
+    echo "----------------------------------------"
+    START_MS=$(date +%s%3N 2>/dev/null || date +%s)
+    "$EXE" "$@"
+    EXIT_CODE=$?
+    END_MS=$(date +%s%3N 2>/dev/null || date +%s)
+fi
+
+echo ""
+echo "----------------------------------------"
+
+if [ -n "$START_MS" ] && [ -n "$END_MS" ]; then
+    ELAPSED=$((END_MS - START_MS))
+    echo "[*] Execution time: ${ELAPSED} ms | Exit code: ${EXIT_CODE}"
+else
+    echo "[*] Exit code: ${EXIT_CODE}"
+fi
+
+exit $EXIT_CODE
