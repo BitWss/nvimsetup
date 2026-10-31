@@ -394,8 +394,11 @@ map("x", "}", wrap_selection("{", "}"), { desc = "Surround with {}" })
 map("x", '"', wrap_selection('"', '"'), { desc = 'Surround with ""' })
 map("x", "'", wrap_selection("'", "'"), { desc = "Surround with ''" })
 map("x", "`", wrap_selection("`", "`"), { desc = "Surround with ``" })
-map("x", "<", wrap_selection("<", ">"), { desc = "Surround with <>" })
-map("x", ">", wrap_selection("<", ">"), { desc = "Surround with <>" })
+-- Visual Indentation: Tab / Shift-Tab and > / < (retains selection for easy repeated indenting)
+map("x", ">", ">gv", { desc = "Indent right" })
+map("x", "<", "<gv", { desc = "Indent left" })
+map("x", "<Tab>", ">gv", { desc = "Indent right (Tab)" })
+map("x", "<S-Tab>", "<gv", { desc = "Indent left (Shift-Tab)" })
 
 -- Re-apply on VeryLazy to ensure no LazyVim defaults or plugins override our mappings
 if not vim.g._colemak_keymaps_autocmd_set then
